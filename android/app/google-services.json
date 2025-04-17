@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "489088118779",
+    "project_id": "campus-manager-5cfda",
+    "storage_bucket": "campus-manager-5cfda.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489088118779:android:95219ab3c4e2397253e55e",
+        "android_client_info": {
+          "package_name": "com.example.campus_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEmumEmqkIowEmFBccN3HHPz1mRc2lKSQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,1 @@
+D:\mini project\campus_manager\build\app\intermediates\cxx\RelWithDebInfo\6m22252p\obj\arm64-v8a

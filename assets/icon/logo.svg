@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512mm"
+   height="512mm"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="logo.png"
+   inkscape:export-xdpi="50.799999"
+   inkscape:export-ydpi="50.799999"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:export-bgcolor="#00000000"
+     inkscape:zoom="0.2447271"
+     inkscape:cx="208.39539"
+     inkscape:cy="749.8148"
+     inkscape:window-width="1920"
+     inkscape:window-height="991"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+       id="rect1"
+       width="512"
+       height="512"
+       x="0"
+       y="0" />
+    <g
+       id="g3"
+       transform="matrix(0.93461888,0,0,0.93461888,38.551638,52.930375)"
+       style="opacity:0.856338;fill:#2a4dbd;fill-opacity:1">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:98.4395px;font-family:Impact;-inkscape-font-specification:Impact;fill:#2a4dbd;fill-opacity:1;stroke:none;stroke-width:10.4404;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+         x="100.05394"
+         y="215.2126"
+         id="text2"><tspan
+           sodipodi:role="line"
+           id="tspan2"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Impact;-inkscape-font-specification:Impact;fill:#2a4dbd;fill-opacity:1;stroke:none;stroke-width:10.4404"
+           x="100.05394"
+           y="215.2126">Campus</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:98.4395px;font-family:Impact;-inkscape-font-specification:Impact;fill:#2a4dbd;fill-opacity:1;stroke:none;stroke-width:10.4404;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+         x="34.090061"
+         y="287.78427"
+         id="text3"><tspan
+           sodipodi:role="line"
+           id="tspan3"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Impact;-inkscape-font-specification:Impact;fill:#2a4dbd;fill-opacity:1;stroke:none;stroke-width:10.4404"
+           x="34.090061"
+           y="287.78427">Manager</tspan></text>
+      <rect
+         style="fill:#2a4dbd;fill-opacity:1;stroke:none;stroke-width:0.604193;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+         id="rect3"
+         width="1.8919884"
+         height="8.1471863"
+         x="283.52798"
+         y="221.7294" />
+      <path
+         style="fill:#2a4dbd;fill-opacity:1;stroke:none;stroke-width:0.0602713;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+         id="path3"
+         sodipodi:type="arc"
+         sodipodi:cx="397.71243"
+         sodipodi:cy="281.55615"
+         sodipodi:rx="6.634975"
+         sodipodi:ry="6.634975"
+         sodipodi:start="0.014083576"
+         sodipodi:end="6.2669326"
+         sodipodi:open="true"
+         sodipodi:arc-type="arc"
+         d="m 404.34675,281.64959 a 6.634975,6.634975 0 0 1 -6.67744,6.5414 6.634975,6.634975 0 0 1 -6.59185,-6.62764 6.634975,6.634975 0 0 1 6.57746,-6.64192 6.634975,6.634975 0 0 1 6.69161,6.52689" />
+    </g>
+  </g>
+</svg>
