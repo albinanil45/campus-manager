@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:campus_manager/firebase/admin_service/admin_service.dart';
 import 'package:campus_manager/firebase/authentication/authentication.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';

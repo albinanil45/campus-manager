@@ -123,14 +123,8 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       return;
     }
 
+    // Send verification email
     isLoading.value = true;
-    bool isOtpVerified = await widget.enterOtpPopup
-        .showOtpPopup(context, emailController.text.trim());
-    if (!isOtpVerified) {
-      isLoading.value = false;
-      return;
-    }
-
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
     String uid = await widget.authentication.signUpWithEmail(email, password);
@@ -145,6 +139,18 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       return;
     }
 
+     // Send verification email
+    await widget.authentication.sendVerificationEmail(context);
+
+    // Poll for verification
+    bool isVerified = await widget.authentication.waitForEmailVerification();
+    if (!isVerified) {
+      showError('Email not verified. Please check your inbox and try again.');
+      await widget.authentication.logoutUser();
+      isLoading.value = false;
+      return;
+    }
+    
     UserModel user = UserModel(
       id: uid,
       name: nameController.text.trim(),
