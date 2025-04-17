@@ -30,7 +30,6 @@ class NoInternetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
     // Breakpoints
     bool isDesktop = size.width > 1000;
