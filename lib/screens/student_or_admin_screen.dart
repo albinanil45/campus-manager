@@ -40,7 +40,7 @@ class StudentOrAdminScreen extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxContentWidth),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -83,7 +83,7 @@ class StudentOrAdminScreen extends StatelessWidget {
                           );
                         },
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14),
+                          padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             'I\'m a Student',
                             style: TextStyle(
