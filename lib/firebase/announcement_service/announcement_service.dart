@@ -9,4 +9,17 @@ class AnnouncementService {
     // Add a new announcement with auto-generated ID
     await announcements.add(announcement.toMap());
   }
+
+  Stream<List<AnnouncementModel>> getActiveAnnouncementsStream() {
+    return FirebaseFirestore.instance
+        .collection('announcements')
+        .where('isDeleted', isEqualTo: false)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((QuerySnapshot snapshot) {
+      return snapshot.docs.map((doc) {
+        return AnnouncementModel.fromDocumentSnapshot(doc);
+      }).toList();
+    });
+  }
 }

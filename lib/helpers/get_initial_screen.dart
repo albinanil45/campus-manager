@@ -1,4 +1,5 @@
 import 'package:campus_manager/firebase/admin_service/admin_service.dart';
+import 'package:campus_manager/firebase/announcement_service/announcement_service.dart';
 import 'package:campus_manager/firebase/authentication/authentication.dart';
 import 'package:campus_manager/firebase/institution_service/institution_service.dart';
 import 'package:campus_manager/firebase/student_service/student_service.dart';
@@ -53,6 +54,7 @@ class GetInitialScreen {
           departmentModel: departmentModel,
           specialRoleModel: specialRoleModel,
           studentCourseModel: courseModel,
+          announcementService: AnnouncementService(),
         );
       } else {
         return StudentOrAdminScreen(

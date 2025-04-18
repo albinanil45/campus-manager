@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:campus_manager/firebase/admin_service/admin_service.dart';
+import 'package:campus_manager/firebase/announcement_service/announcement_service.dart';
 import 'package:campus_manager/firebase/authentication/authentication.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';
 import 'package:campus_manager/models/admin_department_model.dart';
@@ -182,6 +183,7 @@ class _AdminSignupScreenState extends State<AdminSignupScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => HomeScreen(
+              announcementService: AnnouncementService(),
                   specialRoleModel: null,
                   studentCourseModel: null,
                   departmentModel: departmentModel,

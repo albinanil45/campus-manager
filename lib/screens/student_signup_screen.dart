@@ -1,3 +1,4 @@
+import 'package:campus_manager/firebase/announcement_service/announcement_service.dart';
 import 'package:campus_manager/firebase/authentication/authentication.dart';
 import 'package:campus_manager/firebase/student_service/student_service.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';
@@ -180,6 +181,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => HomeScreen(
+              announcementService: AnnouncementService(),
                   studentCourseModel: studentCourse,
                   specialRoleModel: null,
                   departmentModel: null,
