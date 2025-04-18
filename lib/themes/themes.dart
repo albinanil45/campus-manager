@@ -46,7 +46,9 @@ final  lightTheme = ThemeData(
       color: greyColor,
       fontSize: 14
     ),
-    labelStyle: GoogleFonts.poppins(),
+    labelStyle: GoogleFonts.poppins(
+      color: greyColor
+    ),
     floatingLabelStyle: GoogleFonts.poppins(
       color: primaryColor
     )

@@ -1,4 +1,5 @@
 import 'package:campus_manager/models/admin_department_model.dart';
+import 'package:campus_manager/models/special_role_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminService {
@@ -31,6 +32,27 @@ class AdminService {
       }
     } catch (e) {
       print("Error fetching admin department: $e");
+      return null;
+    }
+  }
+
+  Future<void> saveAdminSpecialRole(SpecialRoleModel roleModel) async {
+    final docRef = FirebaseFirestore.instance
+        .collection('special_roles')
+        .doc(roleModel.adminId);
+
+    await docRef.set(roleModel.toMap());
+  }
+
+  Future<SpecialRoleModel?> getSpecialRole(String adminId) async {
+    final docRef =
+        FirebaseFirestore.instance.collection('special_roles').doc(adminId);
+
+    final docSnap = await docRef.get();
+
+    if (docSnap.exists) {
+      return SpecialRoleModel.fromMap(docSnap.data()!);
+    } else {
       return null;
     }
   }

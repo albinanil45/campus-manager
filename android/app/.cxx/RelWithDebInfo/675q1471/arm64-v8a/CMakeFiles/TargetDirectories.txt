@@ -1,0 +1,2 @@
+D:/mini project/campus-manager/android/app/.cxx/RelWithDebInfo/675q1471/arm64-v8a/CMakeFiles/edit_cache.dir
+D:/mini project/campus-manager/android/app/.cxx/RelWithDebInfo/675q1471/arm64-v8a/CMakeFiles/rebuild_cache.dir

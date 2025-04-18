@@ -108,6 +108,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
     final user = await widget.userService.getUser(uid);
     final departmentModel = await widget.adminService.getAdminDepartment(uid);
+    final specialRoleModel = await widget.adminService.getSpecialRole(uid);
 
     isLoading.value = false;
 
@@ -116,6 +117,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
             builder: (context) => HomeScreen(
                   studentCourseModel: null,
                   departmentModel: departmentModel,
+                  specialRoleModel: specialRoleModel,
                   user: user!,
                   authentication: Authentication(),
                   institution: widget.institution,

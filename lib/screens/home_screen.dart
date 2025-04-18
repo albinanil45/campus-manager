@@ -1,17 +1,22 @@
+import 'package:campus_manager/firebase/announcement_service/announcement_service.dart';
 import 'package:campus_manager/firebase/authentication/authentication.dart';
 import 'package:campus_manager/models/admin_department_model.dart';
 import 'package:campus_manager/models/institution_model.dart';
+import 'package:campus_manager/models/special_role_model.dart';
 import 'package:campus_manager/models/student_course_model.dart';
 import 'package:campus_manager/models/user_model.dart';
+import 'package:campus_manager/screens/post_announcement_screen.dart';
 import 'package:campus_manager/screens/student_or_admin_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class HomeScreen extends StatefulWidget {
   final Authentication authentication;
   final InstitutionModel institution;
   final UserModel user;
   final AdminDepartmentModel? departmentModel;
+  final SpecialRoleModel? specialRoleModel;
   final StudentCourseModel? studentCourseModel;
   const HomeScreen({
     super.key,
@@ -20,6 +25,7 @@ class HomeScreen extends StatefulWidget {
     required this.user,
     required this.departmentModel,
     required this.studentCourseModel,
+    required this.specialRoleModel,
   });
 
   @override
@@ -46,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.topLeft,
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: maxContentWidth),
+                        constraints: const BoxConstraints(maxWidth: maxContentWidth),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -61,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                                 await widget.authentication.logoutUser();
                               },
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.menu,
                                 color: whiteColor,
                                 size: 28,
@@ -74,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 14),
                                 Text(
                                   widget.user.name,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: whiteColor,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
@@ -111,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 0),
                   child: Center(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxContentWidth),
+                      constraints: const BoxConstraints(maxWidth: maxContentWidth),
                       child: Card(
                         color: whiteColor,
                         elevation: 4,
@@ -125,9 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               children: [
                                 Row(
-                                  children: const [
-                                    SizedBox(width: 14),
-                                    Text(
+                                  children: [
+                                    const SizedBox(width: 14),
+                                    const Text(
                                       'Announcements',
                                       style: TextStyle(
                                         color: blackColor,
@@ -135,6 +141,61 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
+                                    const Spacer(),
+                                    widget.user.userType == UserType.admin &&
+                                            (widget.specialRoleModel
+                                                        ?.specialRole ==
+                                                    SpecialRole.superAdmin ||
+                                                widget.specialRoleModel
+                                                        ?.specialRole ==
+                                                    SpecialRole
+                                                        .announcementManager)
+                                        ? ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  PageTransition(
+                                                      type: PageTransitionType.rightToLeftWithFade,
+                                                      child: PostAnnouncementScreen(
+                                                        announcementService: AnnouncementService(),
+                                                        user: widget.user,
+                                                      )));
+                                            },
+                                            child: const Text(
+                                              'Post',
+                                              style: TextStyle(
+                                                  color: primaryColor),
+                                            ),
+                                            style: ButtonStyle(
+                                              elevation:
+                                                  const WidgetStatePropertyAll(
+                                                      0),
+                                              minimumSize:
+                                                  const WidgetStatePropertyAll(
+                                                      Size(40, 25)),
+                                              backgroundColor:
+                                                  const WidgetStatePropertyAll(
+                                                      whiteColor),
+                                              side: const WidgetStatePropertyAll(
+                                                BorderSide(
+                                                    width: 1,
+                                                    color: primaryColor),
+                                              ),
+                                              overlayColor: WidgetStateProperty
+                                                  .resolveWith<Color?>(
+                                                (states) {
+                                                  if (states.contains(
+                                                      WidgetState.pressed)) {
+                                                    return primaryColor.withValues(
+                                                        alpha:
+                                                            0.1); // subtle tap effect
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        : const SizedBox()
                                   ],
                                 ),
                                 const SizedBox(height: 10),
@@ -146,9 +207,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       itemCount: 3,
                                       itemBuilder: (context, index) {
                                         return ListTile(
-                                          leading: Icon(Icons.campaign_outlined, color: primaryColor),
-                                          title: Text('This is an announcement ${index + 1}', style: TextStyle(fontSize: 15)),
-                                          subtitle: Text('Admin name', style: TextStyle(fontSize: 13)),
+                                          leading: const Icon(Icons.campaign_outlined,
+                                              color: primaryColor),
+                                          title: Text(
+                                              'This is an announcement ${index + 1}',
+                                              style: const TextStyle(fontSize: 15)),
+                                          subtitle: const Text('Admin name',
+                                              style: TextStyle(fontSize: 13)),
                                           trailing: Text(
                                             'Now',
                                             style: TextStyle(
@@ -158,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         );
                                       },
-                                      separatorBuilder: (_, __) => Divider(),
+                                      separatorBuilder: (_, __) => const Divider(),
                                     ),
                                   ),
                                 ),
@@ -166,8 +231,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   alignment: Alignment.centerRight,
                                   child: TextButton.icon(
                                     onPressed: () {},
-                                    icon: Icon(Icons.arrow_forward_ios, size: 16, color: primaryColor),
-                                    label: Text('See more'),
+                                    icon: const Icon(Icons.arrow_forward_ios,
+                                        size: 16, color: primaryColor),
+                                    label: const Text('See more'),
                                   ),
                                 ),
                               ],
@@ -194,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 0),
                   child: Center(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxContentWidth),
+                      constraints: const BoxConstraints(maxWidth: maxContentWidth),
                       child: Card(
                         color: whiteColor,
                         elevation: 4,
@@ -202,15 +268,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: ListTile(
-                          leading: Icon(Icons.chat_bubble_outline, color: primaryColor),
-                          title: Text(
+                          leading: const Icon(Icons.chat_bubble_outline,
+                              color: primaryColor),
+                          title: const Text(
                             'Discussion Rooms',
                             style: TextStyle(
                               color: blackColor,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          subtitle: Text('Tap to view discussion rooms'),
+                          subtitle: const Text('Tap to view discussion rooms'),
                           onTap: () {
                             // navigate or do something
                           },
@@ -235,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 0),
                   child: Center(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxContentWidth),
+                      constraints: const BoxConstraints(maxWidth: maxContentWidth),
                       child: Card(
                         color: whiteColor,
                         elevation: 4,
@@ -243,15 +310,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: ListTile(
-                          leading: Icon(Icons.lightbulb_outline, color: primaryColor),
-                          title: Text(
+                          leading: const Icon(Icons.lightbulb_outline,
+                              color: primaryColor),
+                          title: const Text(
                             'Suggestions',
                             style: TextStyle(
                               color: blackColor,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          subtitle: Text('Tap to view publicly shared suggestions'),
+                          subtitle:
+                              const Text('Tap to view publicly shared suggestions'),
                           onTap: () {
                             // navigate or do something
                           },

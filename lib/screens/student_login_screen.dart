@@ -109,6 +109,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
             builder: (context) => HomeScreen(
                   studentCourseModel: courseModel,
                   departmentModel: null,
+                  specialRoleModel: null,
                   user: user!,
                   authentication: Authentication(),
                   institution: widget.institution,

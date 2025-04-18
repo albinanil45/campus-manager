@@ -182,6 +182,7 @@ class _AdminSignupScreenState extends State<AdminSignupScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => HomeScreen(
+                  specialRoleModel: null,
                   studentCourseModel: null,
                   departmentModel: departmentModel,
                   user: user,

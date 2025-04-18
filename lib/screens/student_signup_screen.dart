@@ -181,6 +181,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
         MaterialPageRoute(
             builder: (context) => HomeScreen(
                   studentCourseModel: studentCourse,
+                  specialRoleModel: null,
                   departmentModel: null,
                   user: user,
                   authentication: Authentication(),
