@@ -117,6 +117,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         MaterialPageRoute(
             builder: (context) => HomeScreen(
               announcementService: AnnouncementService(),
+              userService: UserService(),
                   studentCourseModel: null,
                   departmentModel: departmentModel,
                   specialRoleModel: specialRoleModel,

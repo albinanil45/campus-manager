@@ -48,6 +48,7 @@ class GetInitialScreen {
         }
 
         return HomeScreen(
+          userService: UserService(),
           user: user,
           institution: institution!,
           authentication: authentication,

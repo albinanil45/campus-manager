@@ -181,6 +181,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => HomeScreen(
+              userService: UserService(),
               announcementService: AnnouncementService(),
                   studentCourseModel: studentCourse,
                   specialRoleModel: null,

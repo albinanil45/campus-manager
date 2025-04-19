@@ -108,6 +108,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => HomeScreen(
+              userService: UserService(),
               announcementService: AnnouncementService(),
                   studentCourseModel: courseModel,
                   departmentModel: null,

@@ -5,7 +5,7 @@ class AnnouncementModel {
   final String title;
   final String content;
   final Timestamp createdAt;
-  final bool isDeleted;
+  bool isDeleted;
   final String createdBy;
 
   AnnouncementModel({
