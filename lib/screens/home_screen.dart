@@ -9,6 +9,7 @@ import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/screens/announcements_list_screen.dart';
 import 'package:campus_manager/screens/post_announcement_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
+import 'package:campus_manager/widgets/home_drawer.dart';
 import 'package:campus_manager/widgets/live_time_ago.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -65,6 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
+      drawer: HomeDrawer(
+        institutionModel: widget.institution,
+        user: widget.user,
+        authentication: Authentication(),
+      ),
       body: Stack(
         children: [
           _buildHeaderBackground(),
@@ -92,10 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
       backgroundColor: primaryColor,
       foregroundColor: whiteColor,
-      leading: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.dehaze_rounded),
-      ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -222,87 +224,117 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildAnnouncementList() {
-    return Expanded(
-      child: MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        child: StreamBuilder(
-          stream: widget.announcementService.getActiveAnnouncementsStream(),
-          builder: (context, snapshot) {
-            bool isLoading = snapshot.connectionState == ConnectionState.waiting;
-            final announcements = snapshot.data ?? [];
+  return Expanded(
+    child: MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: StreamBuilder(
+        stream: widget.announcementService.getActiveAnnouncementsStream(),
+        builder: (context, snapshot) {
+          bool isLoading = snapshot.connectionState == ConnectionState.waiting;
+          final announcements = snapshot.data ?? [];
 
-            return Skeletonizer(
-              enabled: isLoading,
-              child: ListView.separated(
-                itemCount: announcements.length > 3 ? 3 : announcements.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (context, index) {
-                  final announcement = announcements[index];
+          // Empty state
+          if (!isLoading && announcements.isEmpty) {
+            return const Center(
+              child: Text(
+                'No announcements yet',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            );
+          }
 
-                  return FutureBuilder(
-                    future: getDeletedData(
-                      announcement.createdBy,
-                      announcement.id!,
-                      announcement.isDeleted,
-                    ),
-                    builder: (context, userSnapshot) {
-                      bool isUserLoading = userSnapshot.connectionState == ConnectionState.waiting;
-                      final admin = userSnapshot.data?[0] as UserModel?;
-                      UserModel? deletedAdmin;
+          return Skeletonizer(
+            enabled: isLoading,
+            child: ListView.separated(
+              itemCount: announcements.length > 3 ? 3 : announcements.length,
+              separatorBuilder: (_, __) => const Divider(),
+              itemBuilder: (context, index) {
+                final announcement = announcements[index];
 
-                      if (announcement.isDeleted &&
-                          userSnapshot.data != null &&
-                          userSnapshot.data!.length > 1) {
-                        deletedAdmin = userSnapshot.data![1];
-                      }
+                return FutureBuilder(
+                  future: getDeletedData(
+                    announcement.createdBy,
+                    announcement.id!,
+                    announcement.isDeleted,
+                  ),
+                  builder: (context, userSnapshot) {
+                    bool isUserLoading = userSnapshot.connectionState == ConnectionState.waiting;
+                    final admin = userSnapshot.data?[0] as UserModel?;
+                    UserModel? deletedAdmin;
 
-                      return Skeletonizer(
-                        enabled: isUserLoading,
-                        child: ListTile(
-                          leading: const Icon(Icons.campaign_outlined, color: primaryColor),
-                          title: announcement.isDeleted
-                              ? deletedAdmin?.id == admin?.id
-                                  ? const Text(
-                                      'This announcement was deleted',
-                                      style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.grey,
-                                        fontSize: 14,
-                                      ),
-                                    )
-                                  : Text(
-                                      'This announcement was deleted by ${deletedAdmin?.name}',
+                    if (announcement.isDeleted &&
+                        userSnapshot.data != null &&
+                        userSnapshot.data!.length > 1) {
+                      deletedAdmin = userSnapshot.data![1];
+                    }
+
+                    return Skeletonizer(
+                      enabled: isUserLoading,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                           // const Icon(Icons.campaign_outlined, color: primaryColor),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Title or Deleted Info
+                                  if (announcement.isDeleted)
+                                    Text(
+                                      deletedAdmin?.id == admin?.id
+                                          ? 'This announcement was deleted'
+                                          : 'This announcement was deleted by ${deletedAdmin?.name}',
                                       style: const TextStyle(
                                         fontStyle: FontStyle.italic,
                                         color: Colors.grey,
                                         fontSize: 14,
                                       ),
                                     )
-                              : Text(
-                                  announcement.title,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 8),
-                              Text(admin?.name ?? "", style: const TextStyle(fontSize: 13)),
-                              LiveTimeAgo(timestamp: announcement.createdAt),
-                            ],
-                          ),
+                                  else
+                                    Text(
+                                      announcement.title,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+
+                                  const SizedBox(height: 6),
+
+                                  // Admin name and time in one row
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        admin?.name ?? "",
+                                        style: const TextStyle(fontSize: 13, color: Colors.black54),
+                                      ),
+                                      LiveTimeAgo(timestamp: announcement.createdAt),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  );
-                },
-              ),
-            );
-          },
-        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 
   Widget _buildSeeMoreButton() {
     return Align(

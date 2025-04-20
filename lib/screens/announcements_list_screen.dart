@@ -95,116 +95,149 @@ class _AnnouncementsListScreenState extends State<AnnouncementsListScreen> {
       ),
 
       body: StreamBuilder<List<AnnouncementModel>>(
-        stream: widget.announcementService.getActiveAnnouncementsStream(),
-        builder: (context, snapshot) {
-          bool isStreamLoading = snapshot.connectionState == ConnectionState.waiting;
-          final announcements = snapshot.data ?? [];
+  stream: widget.announcementService.getActiveAnnouncementsStream(),
+  builder: (context, snapshot) {
+    bool isStreamLoading = snapshot.connectionState == ConnectionState.waiting;
+    final announcements = snapshot.data ?? [];
 
-          return Skeletonizer(
-            enabled: isStreamLoading,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                double maxContentWidth = 700;
+    return Skeletonizer(
+      enabled: isStreamLoading,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double maxContentWidth = 700;
 
-                return Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxContentWidth),
-                    child: ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      itemCount: announcements.length,
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemBuilder: (context, index) {
-                        final announcement = announcements[index];
+          if (!isStreamLoading && announcements.isEmpty) {
+            return const Center(
+              child: Text(
+                'No announcements yet',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            );
+          }
 
-                        return FutureBuilder(
-                          future: getDeletedData(
-                            announcement.createdBy,
-                            announcement.id!,
-                            announcement.isDeleted,
-                          ),
-                          builder: (context, userSnapshot) {
-                            bool isUserLoading = userSnapshot.connectionState == ConnectionState.waiting;
-                            final admin = userSnapshot.data?[0] as UserModel?;
-                            UserModel? deletedAdmin;
+          return Center(
+  child: ConstrainedBox(
+    constraints: BoxConstraints(maxWidth: maxContentWidth),
+    child: ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      itemCount: announcements.length,
+      separatorBuilder: (_, __) => const Divider(),
+      itemBuilder: (context, index) {
+        final announcement = announcements[index];
 
-                            if (announcement.isDeleted &&
-                                userSnapshot.data != null &&
-                                userSnapshot.data!.length > 1) {
-                              deletedAdmin = userSnapshot.data![1];
-                            }
+        return FutureBuilder(
+          future: getDeletedData(
+            announcement.createdBy,
+            announcement.id!,
+            announcement.isDeleted,
+          ),
+          builder: (context, userSnapshot) {
+            bool isUserLoading = userSnapshot.connectionState == ConnectionState.waiting;
+            final admin = userSnapshot.data?[0] as UserModel?;
+            UserModel? deletedAdmin;
 
-                            return Skeletonizer(
-                              enabled: isUserLoading,
-                              child: ListTile(
-                                title: announcement.isDeleted
-                                    ? (deletedAdmin?.id == admin?.id
-                                        ? const Text(
-                                            'This announcement was deleted',
-                                            style: TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                              color: Colors.grey,
-                                              fontSize: 14,
-                                            ),
-                                          )
-                                        : Text(
-                                            'This announcement was deleted by ${deletedAdmin?.name}',
-                                            style: const TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                              color: Colors.grey,
-                                              fontSize: 14,
-                                            ),
-                                          ))
-                                    : Text(
-                                        announcement.title,
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
+            if (announcement.isDeleted &&
+                userSnapshot.data != null &&
+                userSnapshot.data!.length > 1) {
+              deletedAdmin = userSnapshot.data![1];
+            }
 
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 13),
-
-                                    if (!announcement.isDeleted)
-                                      Text(
-                                        announcement.content,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-
-                                    Text(
-                                      'By ${admin?.name}',
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-
-                                    const SizedBox(height: 2),
-                                    LiveTimeAgo(timestamp: announcement.createdAt),
-                                  ],
+            return Skeletonizer(
+              enabled: isUserLoading,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title and Content (with padding to avoid overlapping the delete icon)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 40),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (announcement.isDeleted)
+                                Text(
+                                  deletedAdmin?.id == admin?.id
+                                      ? 'This announcement was deleted'
+                                      : 'This announcement was deleted by ${deletedAdmin?.name}',
+                                  style: const TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                )
+                              else
+                                Text(
+                                  announcement.title,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
 
-                                trailing: widget.user.userType == UserType.admin &&
-                                        (widget.specialRoleModel?.specialRole == SpecialRole.superAdmin ||
-                                            widget.specialRoleModel?.specialRole == SpecialRole.announcementManager) &&
-                                        !announcement.isDeleted
-                                    ? IconButton(
-                                        onPressed: () => deleteAnnouncement(announcement),
-                                        icon: const Icon(
-                                          Icons.delete_outline,
-                                          color: primaryColor,
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                            );
-                          },
-                        );
-                      },
+                              const SizedBox(height: 8),
+
+                              if (!announcement.isDeleted)
+                                Text(
+                                  announcement.content,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+
+                              const SizedBox(height: 8),
+                            ],
+                          ),
+                        ),
+
+                        // Admin Name and Time Row (no padding so time aligns right)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'By ${admin?.name ?? "Unknown"}',
+                              style: const TextStyle(fontSize: 12, color: Colors.black54),
+                            ),
+                            LiveTimeAgo(timestamp: announcement.createdAt),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                );
-              },
-            ),
-          );
+
+                    // Delete icon top-right
+                    if (widget.user.userType == UserType.admin &&
+                        (widget.specialRoleModel?.specialRole == SpecialRole.superAdmin ||
+                            widget.specialRoleModel?.specialRole == SpecialRole.announcementManager) &&
+                        !announcement.isDeleted)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: IconButton(
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => deleteAnnouncement(announcement),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    ),
+  ),
+);
+
         },
       ),
+    );
+  },
+),
+
     );
   }
 }
