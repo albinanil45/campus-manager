@@ -1,5 +1,7 @@
 import 'package:campus_manager/firebase/announcement_service/announcement_service.dart';
 import 'package:campus_manager/firebase/authentication/authentication.dart';
+import 'package:campus_manager/firebase/student_service/student_service.dart';
+import 'package:campus_manager/firebase/suggestion_service/suggestion_service.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';
 import 'package:campus_manager/models/admin_department_model.dart';
 import 'package:campus_manager/models/institution_model.dart';
@@ -8,6 +10,8 @@ import 'package:campus_manager/models/student_course_model.dart';
 import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/screens/announcements_list_screen.dart';
 import 'package:campus_manager/screens/post_announcement_screen.dart';
+import 'package:campus_manager/screens/post_suggestion_screen.dart';
+import 'package:campus_manager/screens/suggestions_list_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
 import 'package:campus_manager/widgets/home_drawer.dart';
 import 'package:campus_manager/widgets/live_time_ago.dart';
@@ -80,14 +84,41 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icons.chat_bubble_outline,
             title: 'Discussion Rooms',
             subtitle: 'Tap to view discussion rooms',
+            user: widget.user,
+            specialRole: widget.specialRoleModel?.specialRole,
             onTap: () {},
+            buttonOnTap: (){
+              
+            }
           ),
           _buildInfoCardSection(
             top: 550,
             icon: Icons.lightbulb_outline,
             title: 'Suggestions',
             subtitle: 'Tap to view publicly shared suggestions',
-            onTap: () {},
+            user: widget.user,
+            specialRole: widget.specialRoleModel?.specialRole,
+            onTap: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: SuggestionsListScreen(user: widget.user,suggestionService: SuggestionService(),userService: UserService(),specialRole: widget.specialRoleModel?.specialRole,studentService: StudentService(),)
+                )
+              );
+            },
+            buttonOnTap: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: PostSuggestionScreen(
+                    user: widget.user,
+                    suggestionService: SuggestionService(),
+                  )
+                )
+              );
+            },
           ),
         ],
       ),
@@ -187,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const Spacer(),
         if (user.userType == UserType.admin &&
             (specialRole == SpecialRole.superAdmin ||
-                specialRole == SpecialRole.announcementManager))
+                specialRole == SpecialRole.suggestionManager))
           ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -365,7 +396,10 @@ class _HomeScreenState extends State<HomeScreen> {
     required IconData icon,
     required String title,
     required String subtitle,
+    required UserModel user,
+    required SpecialRole? specialRole,
     required VoidCallback onTap,
+    required VoidCallback buttonOnTap
   }) {
     return Positioned(
       top: top,
@@ -375,49 +409,97 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: icon,
         title: title,
         subtitle: subtitle,
+        user: user,
+        specialRole: specialRole,
         onTap: onTap,
+        buttonOnTap: buttonOnTap
       ),
     );
   }
 
   Widget _buildInfoCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        bool isMobile = constraints.maxWidth < 650;
+  required IconData icon,
+  required String title,
+  required String subtitle,
+  required UserModel user,
+  required SpecialRole? specialRole,
+  required VoidCallback onTap,
+  required VoidCallback buttonOnTap,
+}) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      bool isMobile = constraints.maxWidth < 650;
 
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 0),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: maxContentWidth),
-              child: Card(
-                color: whiteColor,
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: ListTile(
-                  leading: Icon(icon, color: primaryColor),
-                  title: Text(
-                    title,
-                    style: const TextStyle(
-                      color: blackColor,
-                      fontWeight: FontWeight.w600,
+      // Determine if button should show and what label it should have
+      bool showButton = false;
+      String buttonText = '';
+
+      if (title == 'Discussion Rooms' &&
+          user.userType == UserType.admin &&
+          (specialRole == SpecialRole.superAdmin ||
+              specialRole == SpecialRole.discussionRoomManager)) {
+        showButton = true;
+        buttonText = 'New';
+      } else if (title == 'Suggestions' && user.userType == UserType.student) {
+        showButton = true;
+        buttonText = 'Post';
+      }
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 0),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: maxContentWidth),
+            child: Card(
+              color: whiteColor,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: ListTile(
+                leading: Icon(icon, color: primaryColor),
+                title: Row(
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: blackColor,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  subtitle: Text(subtitle),
-                  onTap: onTap,
+                    const Spacer(),
+                    if (showButton)
+                      ElevatedButton(
+                        onPressed: buttonOnTap,
+                        style: ButtonStyle(
+                          elevation: const WidgetStatePropertyAll(0),
+                          minimumSize: const WidgetStatePropertyAll(Size(40, 25)),
+                          backgroundColor: const WidgetStatePropertyAll(whiteColor),
+                          side: const WidgetStatePropertyAll(
+                            BorderSide(width: 1, color: primaryColor),
+                          ),
+                          overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.pressed)
+                                ? primaryColor.withAlpha(25)
+                                : null,
+                          ),
+                        ),
+                        child: Text(
+                          buttonText,
+                          style: const TextStyle(color: primaryColor),
+                        ),
+                      ),
+                  ],
                 ),
+                subtitle: Text(subtitle),
+                onTap: onTap,
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 }

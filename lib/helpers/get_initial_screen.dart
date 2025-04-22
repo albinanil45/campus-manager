@@ -36,11 +36,16 @@ class GetInitialScreen {
         final uid = await authentication.getLoggedInUserUid();
         final user = await userService.getUser(uid!);
 
+        if(user == null){
+          authentication.deleteCurrentUser();
+          return StudentOrAdminScreen(institution: institution!);
+        }
+
         AdminDepartmentModel? departmentModel;
         SpecialRoleModel? specialRoleModel;
         StudentCourseModel? courseModel;
 
-        if (user!.userType == UserType.admin) {
+        if (user.userType == UserType.admin) {
           departmentModel = await adminService.getAdminDepartment(uid);
           specialRoleModel = await adminService.getSpecialRole(uid);
         } else if (user.userType == UserType.student) {

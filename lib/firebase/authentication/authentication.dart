@@ -133,4 +133,20 @@ class Authentication {
     }
     return false;
   }
+
+  Future<void> deleteCurrentUser() async {
+  try {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      await user.delete();
+      print("User deleted successfully.");
+    } else {
+      print("No user is currently signed in.");
+    }
+  } catch (e) {
+    print("Error deleting user: $e");
+  }
+}
+
 }
