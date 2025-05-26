@@ -20,17 +20,17 @@ final  lightTheme = ThemeData(
   ),
   snackBarTheme: SnackBarThemeData(
     behavior: SnackBarBehavior.floating,
-    insetPadding: EdgeInsets.all(20),
+    insetPadding: const EdgeInsets.all(20),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10)
     )
   ),
-  textSelectionTheme: TextSelectionThemeData(
+  textSelectionTheme: const TextSelectionThemeData(
     cursorColor: primaryColor
   ),
   inputDecorationTheme: InputDecorationTheme(
     isDense: true,
-    contentPadding: EdgeInsets.symmetric(
+    contentPadding: const EdgeInsets.symmetric(
       vertical: 12,
       horizontal: 12
     ),

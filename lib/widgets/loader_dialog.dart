@@ -14,15 +14,15 @@ class LoaderDialog {
           ),
           content: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 23,
                 width: 23,
-                child: const CircularProgressIndicator(
+                child: CircularProgressIndicator(
                   color: primaryColor,
                   strokeWidth: 2,
                 ),
               ),
-              SizedBox(width: 20,),
+              const SizedBox(width: 20,),
               if (message != null) ...[
                 const SizedBox(height: 16),
                 Text(message),

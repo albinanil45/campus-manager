@@ -108,8 +108,8 @@ class Authentication {
   Future<void> sendVerificationEmail(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null && !user.emailVerified) {
-      await ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
           content: Text(
             'Verification email sent. Please verify before continuing.'
           ),

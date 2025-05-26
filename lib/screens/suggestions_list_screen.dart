@@ -300,7 +300,7 @@ class SuggestionsTabContent extends StatelessWidget {
                                             ),
                                             Text(
                                               'S${course?.semester} ${course?.course}',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   color: Colors.black54,
                                                   fontSize: 12),
                                             ),
@@ -327,12 +327,12 @@ class SuggestionsTabContent extends StatelessWidget {
                                               ),
                                               Text(
                                                 'Feedback : ${suggestion.feedback}',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.black54
                                                 ),
                                               ),
-                                              SizedBox(height: 14)
+                                              const SizedBox(height: 14)
                                             ],
                                             Text(
                                               'By ${admin?.name ?? "Unknown"}',
@@ -342,7 +342,7 @@ class SuggestionsTabContent extends StatelessWidget {
                                             ),
                                             Text(
                                               'S${course?.semester} ${course?.course}',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   color: Colors.black54,
                                                   fontSize: 12),
                                             ),
@@ -612,7 +612,7 @@ class PrivateSuggestionsTab extends StatelessWidget {
                                               ),
                                               Text(
                                                 'S${course?.semester} ${course?.course}',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.black54,
                                                     fontSize: 12),
                                               ),
@@ -639,7 +639,7 @@ class PrivateSuggestionsTab extends StatelessWidget {
                                                 ),
                                                 Text(
                                                 'Feedback : ${suggestion.feedback}',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.black54
                                                 ),
@@ -654,7 +654,7 @@ class PrivateSuggestionsTab extends StatelessWidget {
                                               ),
                                               Text(
                                                 'S${course?.semester} ${course?.course}',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.black54,
                                                     fontSize: 12),
                                               ),
@@ -779,7 +779,7 @@ class PrivateSuggestionsTab extends StatelessWidget {
                                                               .suggestionManager) &&
                                                   !suggestion.isReviewed) {
                                                 items.add(
-                                                  PopupMenuItem<String>(
+                                                  const PopupMenuItem<String>(
                                                     value: 'review',
                                                     child: Text(
                                                         'Mark as Reviewed',

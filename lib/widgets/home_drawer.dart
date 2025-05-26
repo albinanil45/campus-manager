@@ -79,7 +79,9 @@ class HomeDrawer extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            user.userType == UserType.student ? 'Student' : 'Admin',
+                            user.userType == UserType.student
+                                ? 'Student'
+                                : 'Admin',
                             style: const TextStyle(
                               color: whiteColor,
                               fontSize: 13,
@@ -92,7 +94,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ],
             ),
-          ), 
+          ),
           ListTile(
             leading: const Icon(
               Icons.logout_rounded,

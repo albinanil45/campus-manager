@@ -95,39 +95,39 @@ class ReviewSuggestionScreen extends StatelessWidget {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Text(
                                   'Category • ${FormatCategory.formatCategoryName(suggestion.category)}',
-                                  style: TextStyle(fontSize: 12),
+                                  style: const TextStyle(fontSize: 12),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10
                                 ),
                                 Text(
                                   'By $studentName',
-                                  style: TextStyle(fontSize: 12),
+                                  style: const TextStyle(fontSize: 12),
                                 ),
                                 Text(
                                   'S${course.semester} ${course.course}',
-                                  style: TextStyle(fontSize: 12),
+                                  style: const TextStyle(fontSize: 12),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 26,
                           ),
                           TextField(
                             controller: feedbackController,
                             maxLines: 5,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 label: Text('Feedback'),
                                 labelStyle:
                                     TextStyle(fontSize: 14, color: greyColor)),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           ValueListenableBuilder(
                             valueListenable: isLoading,
                             builder: (context, value, child) {
@@ -149,7 +149,7 @@ class ReviewSuggestionScreen extends StatelessWidget {
                                             strokeWidth: 2,
                                           ),
                                         )
-                                      : Text(
+                                      : const Text(
                                           'Review',
                                           style: TextStyle(
                                               color: whiteColor, fontSize: 18),

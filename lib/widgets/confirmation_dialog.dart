@@ -29,12 +29,12 @@ class ConfirmationDialog {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
-                minimumSize: Size(100, 35)
+                minimumSize: const Size(100, 35)
               ),
               onPressed: () => Navigator.of(context).pop(true),
               child: Text(
                 confirmText,
-                style: TextStyle(
+                style: const TextStyle(
                   color: whiteColor
                 ),
               ),

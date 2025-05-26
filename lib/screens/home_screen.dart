@@ -1,5 +1,6 @@
 import 'package:campus_manager/firebase/announcement_service/announcement_service.dart';
 import 'package:campus_manager/firebase/authentication/authentication.dart';
+import 'package:campus_manager/firebase/discussion_room_service/discussion_room_service.dart';
 import 'package:campus_manager/firebase/student_service/student_service.dart';
 import 'package:campus_manager/firebase/suggestion_service/suggestion_service.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';
@@ -9,6 +10,7 @@ import 'package:campus_manager/models/special_role_model.dart';
 import 'package:campus_manager/models/student_course_model.dart';
 import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/screens/announcements_list_screen.dart';
+import 'package:campus_manager/screens/create_discussion_room_screen.dart';
 import 'package:campus_manager/screens/post_announcement_screen.dart';
 import 'package:campus_manager/screens/post_suggestion_screen.dart';
 import 'package:campus_manager/screens/suggestions_list_screen.dart';
@@ -88,11 +90,17 @@ class _HomeScreenState extends State<HomeScreen> {
             specialRole: widget.specialRoleModel?.specialRole,
             onTap: () {},
             buttonOnTap: (){
-              
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: CreateDiscussionRoomScreen(user: widget.user,discussionRoomService: DiscussionRoomService())
+                )
+              );
             }
           ),
           _buildInfoCardSection(
-            top: 550,
+            top: 560,
             icon: Icons.lightbulb_outline,
             title: 'Suggestions',
             subtitle: 'Tap to view publicly shared suggestions',
