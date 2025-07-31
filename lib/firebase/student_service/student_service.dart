@@ -11,7 +11,6 @@ class StudentService {
       await docRef.set(studentCourse.toMap());
       return true;
     } catch (e) {
-      print('Error saving student course data: $e');
       return false;
     }
   }
@@ -27,12 +26,23 @@ class StudentService {
       if (docSnapshot.exists && docSnapshot.data() != null) {
         return StudentCourseModel.fromMap(docSnapshot.data()!);
       } else {
-        print('No student course data found for ID: $studentId');
         return null;
       }
     } catch (e) {
-      print('Error retrieving student course data: $e');
       return null;
+    }
+  }
+
+  Future<List<StudentCourseModel>> getAllStudentCourses() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('student_courses').get();
+
+      return snapshot.docs.map((doc) {
+        return StudentCourseModel.fromMap(doc.data());
+      }).toList();
+    } catch (e) {
+      return [];
     }
   }
 }

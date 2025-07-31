@@ -16,7 +16,6 @@ class InstitutionService {
         return null;
       }
     } catch (e) {
-      print('Error fetching institution details: $e');
       return null;
     }
   }

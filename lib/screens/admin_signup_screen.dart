@@ -15,7 +15,6 @@ import 'package:campus_manager/validators/validators.dart';
 import 'package:campus_manager/widgets/enter_otp_popup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
 class AdminSignupScreen extends StatefulWidget {
@@ -183,8 +182,8 @@ class _AdminSignupScreenState extends State<AdminSignupScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => HomeScreen(
-              userService: UserService(),
-              announcementService: AnnouncementService(),
+                  userService: UserService(),
+                  announcementService: AnnouncementService(),
                   specialRoleModel: null,
                   studentCourseModel: null,
                   departmentModel: departmentModel,
@@ -220,12 +219,12 @@ class _AdminSignupScreenState extends State<AdminSignupScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const SizedBox(height: 20),
-                          Text(
+                          const Text(
                             'ADMIN SIGNUP',
-                            style: GoogleFonts.poppins(
+                            style: TextStyle(
                               color: primaryColor,
                               fontSize: 28,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w700,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -407,7 +406,12 @@ class _AdminSignupScreenState extends State<AdminSignupScreen> {
                                     ),
                                   );
                                 },
-                                child: const Text('Sign In'),
+                                child: const Text(
+                                  'Sign In',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ],
                           ),

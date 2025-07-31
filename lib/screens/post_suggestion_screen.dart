@@ -9,34 +9,33 @@ import 'package:flutter/material.dart';
 class PostSuggestionScreen extends StatelessWidget {
   final UserModel user;
   final SuggestionService suggestionService;
-  PostSuggestionScreen({super.key, required this.user, required this.suggestionService});
+  PostSuggestionScreen(
+      {super.key, required this.user, required this.suggestionService});
 
   final ValueNotifier<bool> isLoading = ValueNotifier(false);
   final ValueNotifier<bool> isPublic = ValueNotifier(false);
-  final ValueNotifier<SuggestionCategories?> selectedCategory = ValueNotifier(null);
+  final ValueNotifier<SuggestionCategories?> selectedCategory =
+      ValueNotifier(null);
 
   final contentController = TextEditingController();
 
-  
-
-  Future<void> postSuggestion(BuildContext context)async{
-    if(contentController.text.isEmpty || selectedCategory.value == null){
+  Future<void> postSuggestion(BuildContext context) async {
+    if (contentController.text.isEmpty || selectedCategory.value == null) {
       showError(context, 'Please fill all fields');
       return;
     }
     isLoading.value = true;
     final suggestion = SuggestionModel(
-      id: null,
-      studentId: user.id,
-      content: contentController.text.trim(),
-      category: selectedCategory.value!,
-      isPublic: isPublic.value,
-      reviewedBy: null,
-      feedback: null,
-      isDeleted: false,
-      isReviewed: false,
-      createdAt: Timestamp.now()
-    );
+        id: null,
+        studentId: user.id,
+        content: contentController.text.trim(),
+        category: selectedCategory.value!,
+        isPublic: isPublic.value,
+        reviewedBy: null,
+        feedback: null,
+        isDeleted: false,
+        isReviewed: false,
+        createdAt: Timestamp.now());
     await suggestionService.storeSuggestion(suggestion);
     showError(context, 'Suggestion Posted');
     selectedCategory.value = null;
@@ -154,7 +153,7 @@ class PostSuggestionScreen extends StatelessWidget {
           children: [
             const Text(
               'Visibility',
-              style: TextStyle(fontWeight: FontWeight.w500),
+              style: TextStyle(fontWeight: FontWeight.w600),
             ),
             Row(
               children: [
@@ -192,10 +191,8 @@ class PostSuggestionScreen extends StatelessWidget {
           height: 50,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
-            onPressed: (){
-              isLoading.value
-              ?null
-              :postSuggestion(context);
+            onPressed: () {
+              isLoading.value ? null : postSuggestion(context);
             },
             child: loading
                 ? const SizedBox(

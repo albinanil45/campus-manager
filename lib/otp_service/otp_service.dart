@@ -11,10 +11,9 @@ class OtpService {
 // Method to send OTP to an email using mailer package
   Future<String> sendOtpEmail(String recipientEmail) async {
     String otp = generateOtp();
-    print('otp generated $otp');
 
-    String username = 'albinanilkumar45@gmail.com'; 
-    String password = 'vjmb gjkw hjuh pcdn'; 
+    String username = 'albinanilkumar45@gmail.com';
+    String password = 'vjmb gjkw hjuh pcdn';
 
     final smtpServer = gmail(username, password);
 
@@ -26,10 +25,8 @@ class OtpService {
 
     try {
       await send(message, smtpServer);
-      print('OTP sent to $recipientEmail');
-    } catch (e) {
-      print('Failed to send OTP: $e');
-    }
+      // ignore: empty_catches
+    } catch (e) {}
 
     return otp;
   }

@@ -11,7 +11,6 @@ class UserService {
 
       return true;
     } catch (e) {
-      print("Error saving user: $e");
       return false;
     }
   }
@@ -26,12 +25,23 @@ class UserService {
       if (userDoc.exists) {
         return UserModel.fromMap(userDoc.data() as Map<String, dynamic>, uid);
       } else {
-        print("User not found");
         return null;
       }
     } catch (e) {
-      print("Error fetching user: $e");
       return null;
+    }
+  }
+
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('users').get();
+
+      return snapshot.docs.map((doc) {
+        return UserModel.fromMap(doc.data(), doc.id);
+      }).toList();
+    } catch (e) {
+      return [];
     }
   }
 }

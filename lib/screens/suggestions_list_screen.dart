@@ -191,13 +191,14 @@ class SuggestionsTabContent extends StatelessWidget {
   final SpecialRole? specialRole;
   final SuggestionsListScreen suggestionsListScreen;
 
-  const SuggestionsTabContent(
-      {super.key,
-      required this.suggestionService,
-      required this.userService,
-      required this.user,
-      required this.specialRole,
-      required this.suggestionsListScreen});
+  const SuggestionsTabContent({
+    super.key,
+    required this.suggestionService,
+    required this.userService,
+    required this.user,
+    required this.specialRole,
+    required this.suggestionsListScreen,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +232,7 @@ class SuggestionsTabContent extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 10),
                     itemCount: suggestions.length,
-                    separatorBuilder: (_, __) => const Divider(),
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final suggestion = suggestions[index];
 
@@ -253,230 +254,216 @@ class SuggestionsTabContent extends StatelessWidget {
 
                             if (data is Map<String, dynamic>) {
                               admin = data['admin'] as UserModel?;
-                              deletedAdmin =
-                                  data['deletedAdmin'] as UserModel?;
-                              course =
-                                  data['course'] as StudentCourseModel?;
-                              reviewedUser =
-                                  data['reviewedUser'] as UserModel?;
+                              deletedAdmin = data['deletedAdmin'] as UserModel?;
+                              course = data['course'] as StudentCourseModel?;
+                              reviewedUser = data['reviewedUser'] as UserModel?;
                             }
 
                             return Skeletonizer(
                               enabled: isUserLoading,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                child: Stack(
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                  border:
+                                      Border.all(color: Colors.grey.shade200),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Main content
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 60),
-                                      child: Column(
+                                    // Top row with text and menu
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Expanded to take all remaining space
+                                        Expanded(
+                                          child: suggestion.isDeleted
+                                              ? Text(
+                                                  deletedAdmin?.id == admin?.id
+                                                      ? 'This suggestion was deleted'
+                                                      : 'Deleted by ${deletedAdmin?.name}',
+                                                  style: const TextStyle(
+                                                    fontStyle: FontStyle.italic,
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                  ),
+                                                )
+                                              : Text(
+                                                  suggestion.content,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    height: 1.4,
+                                                  ),
+                                                ),
+                                        ),
+                                        if (!suggestion.isDeleted &&
+                                            ((user.userType == UserType.admin &&
+                                                    (specialRole ==
+                                                            SpecialRole
+                                                                .superAdmin ||
+                                                        specialRole ==
+                                                            SpecialRole
+                                                                .suggestionManager)) ||
+                                                user.id ==
+                                                    suggestion.studentId))
+                                          PopupMenuButton<String>(
+                                            color: blackColor,
+                                            onSelected: (value) {
+                                              if (value == 'delete') {
+                                                suggestionsListScreen
+                                                    .deleteSuggestion(
+                                                        suggestion, context);
+                                              } else if (value == 'review') {
+                                                Navigator.push(
+                                                  context,
+                                                  PageTransition(
+                                                    type: PageTransitionType
+                                                        .rightToLeftWithFade,
+                                                    child:
+                                                        ReviewSuggestionScreen(
+                                                      user: user,
+                                                      suggestionService:
+                                                          SuggestionService(),
+                                                      course: course!,
+                                                      studentName: admin!.name,
+                                                      suggestion: suggestion,
+                                                    ),
+                                                  ),
+                                                ).then((value) {
+                                                  if (value == 'refresh') {
+                                                    setState(() {});
+                                                  }
+                                                });
+                                              }
+                                            },
+                                            itemBuilder: (context) {
+                                              final items =
+                                                  <PopupMenuEntry<String>>[
+                                                const PopupMenuItem<String>(
+                                                  value: 'delete',
+                                                  child: Text('Delete',
+                                                      style: TextStyle(
+                                                          color: whiteColor)),
+                                                ),
+                                              ];
+
+                                              if (user.userType ==
+                                                      UserType.admin &&
+                                                  (specialRole ==
+                                                          SpecialRole
+                                                              .superAdmin ||
+                                                      specialRole ==
+                                                          SpecialRole
+                                                              .suggestionManager) &&
+                                                  !suggestion.isReviewed) {
+                                                items.add(
+                                                  const PopupMenuItem<String>(
+                                                    value: 'review',
+                                                    child: Text(
+                                                        'Mark as Reviewed',
+                                                        style: TextStyle(
+                                                            color: whiteColor)),
+                                                  ),
+                                                );
+                                              }
+
+                                              return items;
+                                            },
+                                            icon: const Icon(Icons.more_vert,
+                                                color: blackColor),
+                                          ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    // Chips and time
+                                    if (!suggestion.isDeleted)
+                                      Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          if (suggestion.isDeleted) ...[
-                                            SizedBox(
-                                              width: 220,
-                                              child: Text(
-                                                deletedAdmin?.id == admin?.id
-                                                    ? 'This suggestion was deleted'
-                                                    : 'This suggestion was deleted by ${deletedAdmin?.name}',
-                                                style: const TextStyle(
-                                                  fontStyle: FontStyle.italic,
-                                                  color: Colors.grey,
-                                                  fontSize: 14,
+                                          Wrap(
+                                            spacing: 8,
+                                            children: [
+                                              Chip(
+                                                label: Text(
+                                                  FormatCategory
+                                                      .formatCategoryName(
+                                                          suggestion.category),
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
                                                 ),
+                                                backgroundColor:
+                                                    Colors.blue.shade50,
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              height: 14,
-                                            ),
-                                            Text(
-                                              'By ${admin?.name ?? "Unknown"}',
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black54),
-                                            ),
-                                            Text(
-                                              'S${course?.semester} ${course?.course}',
-                                              style: const TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12),
-                                            ),
-                                          ] else ...[
-                                            Text(
-                                              suggestion.content,
-                                              style:
-                                                  const TextStyle(fontSize: 15),
-                                            ),
-                                            const SizedBox(height: 18),
-                                            Text(
-                                              'Category • ${FormatCategory.formatCategoryName(suggestion.category)}',
-                                              style: const TextStyle(
-                                                  fontSize: 13,
-                                                  color: Colors.black54),
-                                            ),
-                                            const SizedBox(height: 14),
-                                            if (suggestion.isReviewed) ...[
-                                              Text(
-                                                'Reviewed By ${reviewedUser?.name}',
-                                                style: const TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.black54),
-                                              ),
-                                              Text(
-                                                'Feedback : ${suggestion.feedback}',
-                                                style: const TextStyle(
-                                                  fontSize: 13,
-                                                  color: Colors.black54
-                                                ),
-                                              ),
-                                              const SizedBox(height: 14)
-                                            ],
-                                            Text(
-                                              'By ${admin?.name ?? "Unknown"}',
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black54),
-                                            ),
-                                            Text(
-                                              'S${course?.semester} ${course?.course}',
-                                              style: const TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12),
-                                            ),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-
-                                    // Time & status
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          if (!suggestion.isDeleted)
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8),
-                                              height: 24,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                                border: Border.all(
-                                                  color: suggestion.isReviewed
-                                                      ? Colors.green
-                                                      : Colors.orange,
-                                                ),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  suggestion.isReviewed
-                                                      ? 'Reviewed'
-                                                      : 'Pending',
-                                                  style: TextStyle(
-                                                    color: suggestion.isReviewed
-                                                        ? Colors.green
-                                                        : Colors.orange,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
+                                              if (!suggestion.isDeleted)
+                                                Chip(
+                                                  label: Text(
+                                                    suggestion.isReviewed
+                                                        ? 'Reviewed'
+                                                        : 'Pending',
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color:
+                                                          suggestion.isReviewed
+                                                              ? Colors.green
+                                                              : Colors.orange,
+                                                    ),
                                                   ),
+                                                  backgroundColor: suggestion
+                                                          .isReviewed
+                                                      ? Colors.green.shade50
+                                                      : Colors.orange.shade50,
                                                 ),
-                                              ),
-                                            ),
-                                          const SizedBox(height: 4),
+                                            ],
+                                          ),
                                           LiveTimeAgo(
                                               timestamp: suggestion.createdAt),
                                         ],
                                       ),
-                                    ),
 
-                                    // PopupMenuButton top-right
-                                    if (!suggestion.isDeleted &&
-                                        ((user.userType == UserType.admin &&
-                                                (specialRole ==
-                                                        SpecialRole
-                                                            .superAdmin ||
-                                                    specialRole ==
-                                                        SpecialRole
-                                                            .suggestionManager)) ||
-                                            (user.id == suggestion.studentId)))
-                                      Positioned(
-                                        top: 0,
-                                        right: 0,
-                                        child: PopupMenuButton<String>(
-                                          color: blackColor,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          onSelected: (value) {
-                                            if (value == 'delete') {
-                                              suggestionsListScreen
-                                                  .deleteSuggestion(
-                                                      suggestion, context);
-                                            } else if (value == 'review') {
-                                              Navigator.push(
-                                                  context,
-                                                  PageTransition(
-                                                      type: PageTransitionType
-                                                          .rightToLeftWithFade,
-                                                      child:
-                                                          ReviewSuggestionScreen(
-                                                        user: user,
-                                                        suggestionService:
-                                                            SuggestionService(),
-                                                        course: course!,
-                                                        studentName:
-                                                            admin!.name,
-                                                        suggestion: suggestion,
-                                                      ))).then((value) {
-                                                if (value == 'refresh') {
-                                                  setState(() {});
-                                                }
-                                              });
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) {
-                                            final items =
-                                                <PopupMenuEntry<String>>[
-                                              const PopupMenuItem<String>(
-                                                value: 'delete',
-                                                child: Text('Delete',
-                                                    style: TextStyle(
-                                                        color: whiteColor)),
-                                              ),
-                                            ];
+                                    const SizedBox(height: 12),
 
-                                            if (user.userType ==
-                                                    UserType.admin &&
-                                                (specialRole ==
-                                                        SpecialRole
-                                                            .superAdmin ||
-                                                    specialRole ==
-                                                        SpecialRole
-                                                            .suggestionManager) &&
-                                                !suggestion.isReviewed) {
-                                              items.add(
-                                                const PopupMenuItem<String>(
-                                                  value: 'review',
-                                                  child: Text(
-                                                      'Mark as Reviewed',
-                                                      style: TextStyle(
-                                                          color: whiteColor)),
-                                                ),
-                                              );
-                                            }
-
-                                            return items;
-                                          },
-                                          icon: const Icon(Icons.more_vert,
-                                              color: blackColor),
-                                        ),
+                                    if (suggestion.isReviewed &&
+                                        !suggestion.isDeleted) ...[
+                                      Text(
+                                        'Reviewed by ${reviewedUser?.name}',
+                                        style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.black87),
                                       ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Feedback: ${suggestion.feedback}',
+                                        style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.black54),
+                                      ),
+                                      const SizedBox(height: 8),
+                                    ],
+
+                                    Text(
+                                      'By ${admin?.name ?? "Unknown"}',
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
+                                    Text(
+                                      'S${course?.semester} ${course?.course}',
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -564,171 +551,71 @@ class PrivateSuggestionsTab extends StatelessWidget {
 
                             if (data is Map<String, dynamic>) {
                               admin = data['admin'] as UserModel?;
-                              deletedAdmin =
-                                  data['deletedAdmin'] as UserModel?;
-                              course =
-                                  data['course'] as StudentCourseModel?;
-                              reviewedUser =
-                                  data['reviewedUser'] as UserModel?;
+                              deletedAdmin = data['deletedAdmin'] as UserModel?;
+                              course = data['course'] as StudentCourseModel?;
+                              reviewedUser = data['reviewedUser'] as UserModel?;
                             }
 
                             return Skeletonizer(
-                                enabled: isUserLoading,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  child: Stack(
-                                    children: [
-                                      // Main content
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 60),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (suggestion.isDeleted) ...[
-                                              SizedBox(
-                                                width: 220,
-                                                child: Text(
+                              enabled: isUserLoading,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                  border:
+                                      Border.all(color: Colors.grey.shade200),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Top row with text and menu
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Expanded to take all remaining space
+                                        Expanded(
+                                          child: suggestion.isDeleted
+                                              ? Text(
                                                   deletedAdmin?.id == admin?.id
                                                       ? 'This suggestion was deleted'
-                                                      : 'This suggestion was deleted by ${deletedAdmin?.name}',
+                                                      : 'Deleted by ${deletedAdmin?.name}',
                                                   style: const TextStyle(
                                                     fontStyle: FontStyle.italic,
                                                     color: Colors.grey,
-                                                    fontSize: 14,
+                                                    fontSize: 16,
                                                   ),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 14,
-                                              ),
-                                              Text(
-                                                'By ${admin?.name ?? "Unknown"}',
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black54),
-                                              ),
-                                              Text(
-                                                'S${course?.semester} ${course?.course}',
-                                                style: const TextStyle(
-                                                    color: Colors.black54,
-                                                    fontSize: 12),
-                                              ),
-                                            ] else ...[
-                                              Text(
-                                                suggestion.content,
-                                                style: const TextStyle(
-                                                    fontSize: 15),
-                                              ),
-                                              const SizedBox(height: 18),
-                                              Text(
-                                                'Category • ${FormatCategory.formatCategoryName(suggestion.category)}',
-                                                style: const TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.black54),
-                                              ),
-                                              const SizedBox(height: 14),
-                                              if (suggestion.isReviewed) ...[
-                                                Text(
-                                                  'Reviewed By ${reviewedUser?.name}',
+                                                )
+                                              : Text(
+                                                  suggestion.content,
                                                   style: const TextStyle(
-                                                      fontSize: 13,
-                                                      color: Colors.black54),
-                                                ),
-                                                Text(
-                                                'Feedback : ${suggestion.feedback}',
-                                                style: const TextStyle(
-                                                  fontSize: 13,
-                                                  color: Colors.black54
-                                                ),
-                                              ),
-                                                const SizedBox(height: 14),
-                                              ],
-                                              Text(
-                                                'By ${admin?.name ?? "Unknown"}',
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black54),
-                                              ),
-                                              Text(
-                                                'S${course?.semester} ${course?.course}',
-                                                style: const TextStyle(
-                                                    color: Colors.black54,
-                                                    fontSize: 12),
-                                              ),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-
-                                      // Time & status
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 0,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            if (!suggestion.isDeleted)
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8),
-                                                height: 24,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                  border: Border.all(
-                                                    color: suggestion.isReviewed
-                                                        ? Colors.green
-                                                        : Colors.orange,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    height: 1.4,
                                                   ),
                                                 ),
-                                                child: Center(
-                                                  child: Text(
-                                                    suggestion.isReviewed
-                                                        ? 'Reviewed'
-                                                        : 'Pending',
-                                                    style: TextStyle(
-                                                      color:
-                                                          suggestion.isReviewed
-                                                              ? Colors.green
-                                                              : Colors.orange,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            const SizedBox(height: 4),
-                                            LiveTimeAgo(
-                                                timestamp:
-                                                    suggestion.createdAt),
-                                          ],
                                         ),
-                                      ),
-
-                                      // PopupMenuButton top-right
-                                      if (!suggestion.isDeleted &&
-                                          ((user.userType == UserType.admin &&
-                                                  (specialRole ==
-                                                          SpecialRole
-                                                              .superAdmin ||
-                                                      specialRole ==
-                                                          SpecialRole
-                                                              .suggestionManager)) ||
-                                              (user.id ==
-                                                  suggestion.studentId)))
-                                        Positioned(
-                                          top: 0,
-                                          right: 0,
-                                          child: PopupMenuButton<String>(
+                                        if (!suggestion.isDeleted &&
+                                            ((user.userType == UserType.admin &&
+                                                    (specialRole ==
+                                                            SpecialRole
+                                                                .superAdmin ||
+                                                        specialRole ==
+                                                            SpecialRole
+                                                                .suggestionManager)) ||
+                                                user.id ==
+                                                    suggestion.studentId))
+                                          PopupMenuButton<String>(
                                             color: blackColor,
-                                            borderRadius:
-                                                BorderRadius.circular(5),
                                             onSelected: (value) {
                                               if (value == 'delete') {
                                                 suggestionsListScreen
@@ -736,29 +623,28 @@ class PrivateSuggestionsTab extends StatelessWidget {
                                                         suggestion, context);
                                               } else if (value == 'review') {
                                                 Navigator.push(
-                                                    context,
-                                                    PageTransition(
-                                                        type: PageTransitionType
-                                                            .rightToLeftWithFade,
-                                                        child:
-                                                            ReviewSuggestionScreen(
-                                                          user: user,
-                                                          suggestionService:
-                                                              SuggestionService(),
-                                                          course: course!,
-                                                          studentName:
-                                                              admin!.name,
-                                                          suggestion:
-                                                              suggestion,
-                                                        ))).then((value) {
+                                                  context,
+                                                  PageTransition(
+                                                    type: PageTransitionType
+                                                        .rightToLeftWithFade,
+                                                    child:
+                                                        ReviewSuggestionScreen(
+                                                      user: user,
+                                                      suggestionService:
+                                                          SuggestionService(),
+                                                      course: course!,
+                                                      studentName: admin!.name,
+                                                      suggestion: suggestion,
+                                                    ),
+                                                  ),
+                                                ).then((value) {
                                                   if (value == 'refresh') {
                                                     setState(() {});
                                                   }
                                                 });
                                               }
                                             },
-                                            itemBuilder:
-                                                (BuildContext context) {
+                                            itemBuilder: (context) {
                                               final items =
                                                   <PopupMenuEntry<String>>[
                                                 const PopupMenuItem<String>(
@@ -794,10 +680,89 @@ class PrivateSuggestionsTab extends StatelessWidget {
                                             icon: const Icon(Icons.more_vert,
                                                 color: blackColor),
                                           ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    // Chips and time
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Wrap(
+                                          spacing: 8,
+                                          children: [
+                                            Chip(
+                                              label: Text(
+                                                FormatCategory
+                                                    .formatCategoryName(
+                                                        suggestion.category),
+                                                style: const TextStyle(
+                                                    fontSize: 12),
+                                              ),
+                                              backgroundColor:
+                                                  Colors.blue.shade50,
+                                            ),
+                                            if (!suggestion.isDeleted)
+                                              Chip(
+                                                label: Text(
+                                                  suggestion.isReviewed
+                                                      ? 'Reviewed'
+                                                      : 'Pending',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: suggestion.isReviewed
+                                                        ? Colors.green
+                                                        : Colors.orange,
+                                                  ),
+                                                ),
+                                                backgroundColor:
+                                                    suggestion.isReviewed
+                                                        ? Colors.green.shade50
+                                                        : Colors.orange.shade50,
+                                              ),
+                                          ],
                                         ),
+                                        LiveTimeAgo(
+                                            timestamp: suggestion.createdAt),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    if (suggestion.isReviewed &&
+                                        !suggestion.isDeleted) ...[
+                                      Text(
+                                        'Reviewed by ${reviewedUser?.name}',
+                                        style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.black87),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Feedback: ${suggestion.feedback}',
+                                        style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.black54),
+                                      ),
+                                      const SizedBox(height: 8),
                                     ],
-                                  ),
-                                ));
+
+                                    Text(
+                                      'By ${admin?.name ?? "Unknown"}',
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
+                                    Text(
+                                      'S${course?.semester} ${course?.course}',
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
                           },
                         ),
                       );

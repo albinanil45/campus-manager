@@ -21,7 +21,6 @@ class Authentication {
 
       return true; // User is logged in and active
     } catch (e) {
-      print('Error checking login status: $e');
       return false;
     }
   }
@@ -77,7 +76,6 @@ class Authentication {
         return null; // No user is logged in
       }
     } catch (e) {
-      print('Error fetching UID: $e');
       return null; // Return null in case of an error
     }
   }
@@ -87,7 +85,6 @@ class Authentication {
       await FirebaseAuth.instance.signOut();
       return true; // Successfully logged out
     } catch (e) {
-      print("Error logging out: $e");
       return false; // Logout failed
     }
   }
@@ -96,11 +93,9 @@ class Authentication {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       return true; // Email sent successfully
-    } on FirebaseAuthException catch (e) {
-      print('FirebaseAuth error: ${e.code} - ${e.message}');
+    } on FirebaseAuthException {
       return false;
     } catch (e) {
-      print('Unexpected error: $e');
       return false;
     }
   }
@@ -108,13 +103,10 @@ class Authentication {
   Future<void> sendVerificationEmail(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null && !user.emailVerified) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Verification email sent. Please verify before continuing.'
-          ),
-        )
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+            Text('Verification email sent. Please verify before continuing.'),
+      ));
       await user.sendEmailVerification();
     }
   }
@@ -135,18 +127,14 @@ class Authentication {
   }
 
   Future<void> deleteCurrentUser() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
 
-    if (user != null) {
-      await user.delete();
-      print("User deleted successfully.");
-    } else {
-      print("No user is currently signed in.");
+      if (user != null) {
+        await user.delete();
+      } else {}
+    } catch (e) {
+      //
     }
-  } catch (e) {
-    print("Error deleting user: $e");
   }
-}
-
 }

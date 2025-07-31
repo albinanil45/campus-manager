@@ -14,7 +14,6 @@ import 'package:campus_manager/validators/validators.dart';
 import 'package:campus_manager/widgets/enter_otp_popup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
 class StudentSignupScreen extends StatefulWidget {
@@ -140,7 +139,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       return;
     }
 
-     // Send verification email
+    // Send verification email
     await widget.authentication.sendVerificationEmail(context);
 
     // Poll for verification
@@ -151,7 +150,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       isLoading.value = false;
       return;
     }
-    
+
     UserModel user = UserModel(
       id: uid,
       name: nameController.text.trim(),
@@ -181,8 +180,8 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => HomeScreen(
-              userService: UserService(),
-              announcementService: AnnouncementService(),
+                  userService: UserService(),
+                  announcementService: AnnouncementService(),
                   studentCourseModel: studentCourse,
                   specialRoleModel: null,
                   departmentModel: null,
@@ -200,208 +199,231 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-              ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center, // vertically center
-                      crossAxisAlignment: CrossAxisAlignment.center, // horizontally center
-                      children: [
-                        const SizedBox(height: 20),
-                        Text(
-                          'STUDENT SIGNUP',
-                          style: GoogleFonts.poppins(
-                            color: primaryColor,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w500,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        mainAxisAlignment:
+                            MainAxisAlignment.center, // vertically center
+                        crossAxisAlignment:
+                            CrossAxisAlignment.center, // horizontally center
+                        children: [
+                          const SizedBox(height: 20),
+                          const Text(
+                            'STUDENT SIGNUP',
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 20),
-                        TextField(
-                          controller: nameController,
-                          textCapitalization: TextCapitalization.words,
-                          decoration: const InputDecoration(hintText: 'Enter name'),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(hintText: 'Enter email'),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: phoneController,
-                          keyboardType: TextInputType.phone,
-                          decoration: const InputDecoration(hintText: 'Enter phone number'),
-                        ),
-                        const SizedBox(height: 10),
-                        ValueListenableBuilder(
-                          valueListenable: selectedCourse,
-                          builder: (context, value, child) {
-                            return DropdownButtonFormField<String>(
-                              borderRadius: BorderRadius.circular(10),
-                              dropdownColor: whiteColor,
-                              value: value,
-                              hint: const Text(
-                                'Choose Course',
-                                style: TextStyle(color: greyColor, fontSize: 14),
-                              ),
-                              onChanged: (String? newValue) {
-                                selectedCourse.value = newValue;
-                              },
-                              items: _courses.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        ValueListenableBuilder(
-                          valueListenable: selectedSemester,
-                          builder: (context, value, child) {
-                            return DropdownButtonFormField<String>(
-                              borderRadius: BorderRadius.circular(10),
-                              dropdownColor: whiteColor,
-                              value: value,
-                              hint: const Text(
-                                'Choose Semester',
-                                style: TextStyle(color: greyColor, fontSize: 14),
-                              ),
-                              onChanged: (String? newValue) {
-                                selectedSemester.value = newValue;
-                              },
-                              items: _semesters.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        ValueListenableBuilder(
-                          valueListenable: obscure,
-                          builder: (context, value, child) {
-                            return TextField(
-                              controller: passwordController,
-                              obscureText: value,
-                              decoration: InputDecoration(
-                                hintText: 'Enter password',
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    obscure.value = !obscure.value;
-                                  },
-                                  icon: Icon(value ? Icons.visibility_off : Icons.visibility),
+                          const SizedBox(height: 20),
+                          TextField(
+                            controller: nameController,
+                            textCapitalization: TextCapitalization.words,
+                            decoration:
+                                const InputDecoration(hintText: 'Enter name'),
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration:
+                                const InputDecoration(hintText: 'Enter email'),
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: phoneController,
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(
+                                hintText: 'Enter phone number'),
+                          ),
+                          const SizedBox(height: 10),
+                          ValueListenableBuilder(
+                            valueListenable: selectedCourse,
+                            builder: (context, value, child) {
+                              return DropdownButtonFormField<String>(
+                                borderRadius: BorderRadius.circular(10),
+                                dropdownColor: whiteColor,
+                                value: value,
+                                hint: const Text(
+                                  'Choose Course',
+                                  style:
+                                      TextStyle(color: greyColor, fontSize: 14),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        ValueListenableBuilder(
-                          valueListenable: confirmObscure,
-                          builder: (context, value, child) {
-                            return TextField(
-                              controller: confirmPasswordController,
-                              obscureText: value,
-                              decoration: InputDecoration(
-                                hintText: 'Confirm password',
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    confirmObscure.value = !confirmObscure.value;
-                                  },
-                                  icon: Icon(value ? Icons.visibility_off : Icons.visibility),
+                                onChanged: (String? newValue) {
+                                  selectedCourse.value = newValue;
+                                },
+                                items: _courses.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          ValueListenableBuilder(
+                            valueListenable: selectedSemester,
+                            builder: (context, value, child) {
+                              return DropdownButtonFormField<String>(
+                                borderRadius: BorderRadius.circular(10),
+                                dropdownColor: whiteColor,
+                                value: value,
+                                hint: const Text(
+                                  'Choose Semester',
+                                  style:
+                                      TextStyle(color: greyColor, fontSize: 14),
                                 ),
+                                onChanged: (String? newValue) {
+                                  selectedSemester.value = newValue;
+                                },
+                                items: _semesters.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          ValueListenableBuilder(
+                            valueListenable: obscure,
+                            builder: (context, value, child) {
+                              return TextField(
+                                controller: passwordController,
+                                obscureText: value,
+                                decoration: InputDecoration(
+                                  hintText: 'Enter password',
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      obscure.value = !obscure.value;
+                                    },
+                                    icon: Icon(value
+                                        ? Icons.visibility_off
+                                        : Icons.visibility),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          ValueListenableBuilder(
+                            valueListenable: confirmObscure,
+                            builder: (context, value, child) {
+                              return TextField(
+                                controller: confirmPasswordController,
+                                obscureText: value,
+                                decoration: InputDecoration(
+                                  hintText: 'Confirm password',
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      confirmObscure.value =
+                                          !confirmObscure.value;
+                                    },
+                                    icon: Icon(value
+                                        ? Icons.visibility_off
+                                        : Icons.visibility),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: institutionIdController,
+                            decoration: const InputDecoration(
+                                hintText: 'Enter institution ID'),
+                          ),
+                          const SizedBox(height: 25),
+                          ValueListenableBuilder(
+                            valueListenable: isLoading,
+                            builder: (context, value, child) {
+                              return ElevatedButton(
+                                onPressed:
+                                    isLoading.value ? null : signupStudent,
+                                child: !isLoading.value
+                                    ? const Text(
+                                        'SIGN UP',
+                                        style: TextStyle(
+                                            color: whiteColor, fontSize: 20),
+                                      )
+                                    : const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          color: whiteColor,
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Already have an account ?',
+                                style: TextStyle(color: blackColor),
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: institutionIdController,
-                          decoration: const InputDecoration(hintText: 'Enter institution ID'),
-                        ),
-                        const SizedBox(height: 25),
-                        ValueListenableBuilder(
-                          valueListenable: isLoading,
-                          builder: (context, value, child) {
-                            return ElevatedButton(
-                              onPressed: isLoading.value ? null : signupStudent,
-                              child: !isLoading.value
-                                  ? const Text(
-                                      'SIGN UP',
-                                      style: TextStyle(color: whiteColor, fontSize: 20),
-                                    )
-                                  : const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: whiteColor,
-                                        strokeWidth: 2,
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.fade,
+                                      childCurrent: StudentOrAdminScreen(
+                                          institution: widget.institution),
+                                      child: StudentLoginScreen(
+                                        validators: Validators(),
+                                        enterOtpPopup: EnterOtpPopup(
+                                            otpService: OtpService()),
+                                        authentication: Authentication(),
+                                        userService: UserService(),
+                                        studentService: StudentService(),
+                                        institution: widget.institution,
                                       ),
                                     ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Already have an account ?',
-                              style: TextStyle(color: blackColor),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageTransition(
-                                    type: PageTransitionType.fade,
-                                    childCurrent: StudentOrAdminScreen(institution: widget.institution),
-                                    child: StudentLoginScreen(
-                                      validators: Validators(),
-                                      enterOtpPopup: EnterOtpPopup(otpService: OtpService()),
-                                      authentication: Authentication(),
-                                      userService: UserService(),
-                                      studentService: StudentService(),
-                                      institution: widget.institution,
-                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'Sign In',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                );
-                              },
-                              child: const Text('Sign In'),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                      ],
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

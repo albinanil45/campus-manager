@@ -11,6 +11,7 @@ import 'package:campus_manager/models/student_course_model.dart';
 import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/screens/announcements_list_screen.dart';
 import 'package:campus_manager/screens/create_discussion_room_screen.dart';
+import 'package:campus_manager/screens/discussion_rooms_list_screen.dart';
 import 'package:campus_manager/screens/post_announcement_screen.dart';
 import 'package:campus_manager/screens/post_suggestion_screen.dart';
 import 'package:campus_manager/screens/suggestions_list_screen.dart';
@@ -60,8 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
     list.add(user);
 
     if (isDeleted) {
-      final deletedData = await widget.announcementService.getDeletedAnnouncement(announcementId);
-      final deletedAdmin = await widget.userService.getUser(deletedData!.deletedBy);
+      final deletedData = await widget.announcementService
+          .getDeletedAnnouncement(announcementId);
+      final deletedAdmin =
+          await widget.userService.getUser(deletedData!.deletedBy);
       list.add(deletedAdmin);
     }
 
@@ -82,25 +85,38 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildHeaderBackground(),
           _buildAnnouncementCard(),
           _buildInfoCardSection(
-            top: 460,
-            icon: Icons.chat_bubble_outline,
-            title: 'Discussion Rooms',
-            subtitle: 'Tap to view discussion rooms',
-            user: widget.user,
-            specialRole: widget.specialRoleModel?.specialRole,
-            onTap: () {},
-            buttonOnTap: (){
-              Navigator.push(
-                context,
-                PageTransition(
-                  type: PageTransitionType.rightToLeftWithFade,
-                  child: CreateDiscussionRoomScreen(user: widget.user,discussionRoomService: DiscussionRoomService())
-                )
-              );
-            }
-          ),
+              top: 460,
+              icon: Icons.chat_bubble_outline,
+              title: 'Discussion Rooms',
+              subtitle: 'Tap to view discussion rooms',
+              user: widget.user,
+              specialRole: widget.specialRoleModel?.specialRole,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: DiscussionRoomsListScreen(
+                        currentUser: widget.user,
+                        discussionRoomService: DiscussionRoomService(),
+                        userService: UserService(),
+                      ),
+                    ));
+              },
+              buttonOnTap: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeftWithFade,
+                    child: CreateDiscussionRoomScreen(
+                      user: widget.user,
+                      discussionRoomService: DiscussionRoomService(),
+                    ),
+                  ),
+                );
+              }),
           _buildInfoCardSection(
-            top: 560,
+            top: 550,
             icon: Icons.lightbulb_outline,
             title: 'Suggestions',
             subtitle: 'Tap to view publicly shared suggestions',
@@ -111,8 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 PageTransition(
                   type: PageTransitionType.rightToLeftWithFade,
-                  child: SuggestionsListScreen(user: widget.user,suggestionService: SuggestionService(),userService: UserService(),specialRole: widget.specialRoleModel?.specialRole,studentService: StudentService(),)
-                )
+                  child: SuggestionsListScreen(
+                    user: widget.user,
+                    suggestionService: SuggestionService(),
+                    userService: UserService(),
+                    specialRole: widget.specialRoleModel?.specialRole,
+                    studentService: StudentService(),
+                  ),
+                ),
               );
             },
             buttonOnTap: () {
@@ -123,8 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: PostSuggestionScreen(
                     user: widget.user,
                     suggestionService: SuggestionService(),
-                  )
-                )
+                  ),
+                ),
               );
             },
           ),
@@ -142,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Text(
             widget.user.name,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
           Text(
             widget.institution.name,
@@ -220,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(
             color: blackColor,
             fontSize: 18,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const Spacer(),
@@ -263,117 +285,122 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildAnnouncementList() {
-  return Expanded(
-    child: MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: StreamBuilder(
-        stream: widget.announcementService.getActiveAnnouncementsStream(),
-        builder: (context, snapshot) {
-          bool isLoading = snapshot.connectionState == ConnectionState.waiting;
-          final announcements = snapshot.data ?? [];
+    return Expanded(
+      child: MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        child: StreamBuilder(
+          stream: widget.announcementService.getActiveAnnouncementsStream(),
+          builder: (context, snapshot) {
+            bool isLoading =
+                snapshot.connectionState == ConnectionState.waiting;
+            final announcements = snapshot.data ?? [];
 
-          // Empty state
-          if (!isLoading && announcements.isEmpty) {
-            return const Center(
-              child: Text(
-                'No announcements yet',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+            // Empty state
+            if (!isLoading && announcements.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No announcements yet',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+              );
+            }
+
+            return Skeletonizer(
+              enabled: isLoading,
+              child: ListView.separated(
+                itemCount: announcements.length > 3 ? 3 : announcements.length,
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (context, index) {
+                  final announcement = announcements[index];
+
+                  return FutureBuilder(
+                    future: getDeletedData(
+                      announcement.createdBy,
+                      announcement.id!,
+                      announcement.isDeleted,
+                    ),
+                    builder: (context, userSnapshot) {
+                      bool isUserLoading = userSnapshot.connectionState ==
+                          ConnectionState.waiting;
+                      final admin = userSnapshot.data?[0] as UserModel?;
+                      UserModel? deletedAdmin;
+
+                      if (announcement.isDeleted &&
+                          userSnapshot.data != null &&
+                          userSnapshot.data!.length > 1) {
+                        deletedAdmin = userSnapshot.data![1];
+                      }
+
+                      return Skeletonizer(
+                        enabled: isUserLoading,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // const Icon(Icons.campaign_outlined, color: primaryColor),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Title or Deleted Info
+                                    if (announcement.isDeleted)
+                                      Text(
+                                        deletedAdmin?.id == admin?.id
+                                            ? 'This announcement was deleted'
+                                            : 'This announcement was deleted by ${deletedAdmin?.name}',
+                                        style: const TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          color: Colors.grey,
+                                          fontSize: 16,
+                                        ),
+                                      )
+                                    else
+                                      Text(
+                                        announcement.title,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+
+                                    const SizedBox(height: 6),
+
+                                    // Admin name and time in one row
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          admin?.name ?? "",
+                                          style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.black54),
+                                        ),
+                                        LiveTimeAgo(
+                                            timestamp: announcement.createdAt),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             );
-          }
-
-          return Skeletonizer(
-            enabled: isLoading,
-            child: ListView.separated(
-              itemCount: announcements.length > 3 ? 3 : announcements.length,
-              separatorBuilder: (_, __) => const Divider(),
-              itemBuilder: (context, index) {
-                final announcement = announcements[index];
-
-                return FutureBuilder(
-                  future: getDeletedData(
-                    announcement.createdBy,
-                    announcement.id!,
-                    announcement.isDeleted,
-                  ),
-                  builder: (context, userSnapshot) {
-                    bool isUserLoading = userSnapshot.connectionState == ConnectionState.waiting;
-                    final admin = userSnapshot.data?[0] as UserModel?;
-                    UserModel? deletedAdmin;
-
-                    if (announcement.isDeleted &&
-                        userSnapshot.data != null &&
-                        userSnapshot.data!.length > 1) {
-                      deletedAdmin = userSnapshot.data![1];
-                    }
-
-                    return Skeletonizer(
-                      enabled: isUserLoading,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                           // const Icon(Icons.campaign_outlined, color: primaryColor),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Title or Deleted Info
-                                  if (announcement.isDeleted)
-                                    Text(
-                                      deletedAdmin?.id == admin?.id
-                                          ? 'This announcement was deleted'
-                                          : 'This announcement was deleted by ${deletedAdmin?.name}',
-                                      style: const TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.grey,
-                                        fontSize: 14,
-                                      ),
-                                    )
-                                  else
-                                    Text(
-                                      announcement.title,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-
-                                  const SizedBox(height: 6),
-
-                                  // Admin name and time in one row
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        admin?.name ?? "",
-                                        style: const TextStyle(fontSize: 13, color: Colors.black54),
-                                      ),
-                                      LiveTimeAgo(timestamp: announcement.createdAt),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          );
-        },
+          },
+        ),
       ),
-    ),
-  );
-}
-
-
+    );
+  }
 
   Widget _buildSeeMoreButton() {
     return Align(
@@ -393,121 +420,129 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
-        icon: const Icon(Icons.arrow_forward_ios, size: 16, color: primaryColor),
-        label: const Text('See more'),
+        icon: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: primaryColor,
+        ),
+        label: const Text(
+          'See more',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }
 
-  Widget _buildInfoCardSection({
-    required double top,
+  Widget _buildInfoCardSection(
+      {required double top,
+      required IconData icon,
+      required String title,
+      required String subtitle,
+      required UserModel user,
+      required SpecialRole? specialRole,
+      required VoidCallback onTap,
+      required VoidCallback buttonOnTap}) {
+    return Positioned(
+      top: top,
+      left: 0,
+      right: 0,
+      child: _buildInfoCard(
+          icon: icon,
+          title: title,
+          subtitle: subtitle,
+          user: user,
+          specialRole: specialRole,
+          onTap: onTap,
+          buttonOnTap: buttonOnTap),
+    );
+  }
+
+  Widget _buildInfoCard({
     required IconData icon,
     required String title,
     required String subtitle,
     required UserModel user,
     required SpecialRole? specialRole,
     required VoidCallback onTap,
-    required VoidCallback buttonOnTap
+    required VoidCallback buttonOnTap,
   }) {
-    return Positioned(
-      top: top,
-      left: 0,
-      right: 0,
-      child: _buildInfoCard(
-        icon: icon,
-        title: title,
-        subtitle: subtitle,
-        user: user,
-        specialRole: specialRole,
-        onTap: onTap,
-        buttonOnTap: buttonOnTap
-      ),
-    );
-  }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isMobile = constraints.maxWidth < 650;
 
-  Widget _buildInfoCard({
-  required IconData icon,
-  required String title,
-  required String subtitle,
-  required UserModel user,
-  required SpecialRole? specialRole,
-  required VoidCallback onTap,
-  required VoidCallback buttonOnTap,
-}) {
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      bool isMobile = constraints.maxWidth < 650;
+        // Determine if button should show and what label it should have
+        bool showButton = false;
+        String buttonText = '';
 
-      // Determine if button should show and what label it should have
-      bool showButton = false;
-      String buttonText = '';
+        if (title == 'Discussion Rooms' &&
+            user.userType == UserType.admin &&
+            (specialRole == SpecialRole.superAdmin ||
+                specialRole == SpecialRole.discussionRoomManager)) {
+          showButton = true;
+          buttonText = 'New';
+        } else if (title == 'Suggestions' &&
+            user.userType == UserType.student) {
+          showButton = true;
+          buttonText = 'Post';
+        }
 
-      if (title == 'Discussion Rooms' &&
-          user.userType == UserType.admin &&
-          (specialRole == SpecialRole.superAdmin ||
-              specialRole == SpecialRole.discussionRoomManager)) {
-        showButton = true;
-        buttonText = 'New';
-      } else if (title == 'Suggestions' && user.userType == UserType.student) {
-        showButton = true;
-        buttonText = 'Post';
-      }
-
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 0),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: maxContentWidth),
-            child: Card(
-              color: whiteColor,
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: ListTile(
-                leading: Icon(icon, color: primaryColor),
-                title: Row(
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: blackColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (showButton)
-                      ElevatedButton(
-                        onPressed: buttonOnTap,
-                        style: ButtonStyle(
-                          elevation: const WidgetStatePropertyAll(0),
-                          minimumSize: const WidgetStatePropertyAll(Size(40, 25)),
-                          backgroundColor: const WidgetStatePropertyAll(whiteColor),
-                          side: const WidgetStatePropertyAll(
-                            BorderSide(width: 1, color: primaryColor),
-                          ),
-                          overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.pressed)
-                                ? primaryColor.withAlpha(25)
-                                : null,
-                          ),
-                        ),
-                        child: Text(
-                          buttonText,
-                          style: const TextStyle(color: primaryColor),
-                        ),
-                      ),
-                  ],
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 0),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: maxContentWidth),
+              child: Card(
+                color: whiteColor,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                subtitle: Text(subtitle),
-                onTap: onTap,
+                child: ListTile(
+                  leading: Icon(icon, color: primaryColor),
+                  title: Row(
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: blackColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (showButton)
+                        ElevatedButton(
+                          onPressed: buttonOnTap,
+                          style: ButtonStyle(
+                            elevation: const WidgetStatePropertyAll(0),
+                            minimumSize:
+                                const WidgetStatePropertyAll(Size(40, 25)),
+                            backgroundColor:
+                                const WidgetStatePropertyAll(whiteColor),
+                            side: const WidgetStatePropertyAll(
+                              BorderSide(width: 1, color: primaryColor),
+                            ),
+                            overlayColor:
+                                WidgetStateProperty.resolveWith<Color?>(
+                              (states) => states.contains(WidgetState.pressed)
+                                  ? primaryColor.withAlpha(25)
+                                  : null,
+                            ),
+                          ),
+                          child: Text(
+                            buttonText,
+                            style: const TextStyle(color: primaryColor),
+                          ),
+                        ),
+                    ],
+                  ),
+                  subtitle: Text(subtitle),
+                  onTap: onTap,
+                ),
               ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 }

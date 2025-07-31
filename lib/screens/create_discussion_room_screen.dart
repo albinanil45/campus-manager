@@ -19,7 +19,7 @@ class CreateDiscussionRoomScreen extends StatelessWidget {
   void createRoom (BuildContext context)async{
     if(titleController.text.isEmpty || descriptionController.text.isEmpty){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             'Please fill all fields'
           ),
@@ -43,7 +43,7 @@ class CreateDiscussionRoomScreen extends StatelessWidget {
     descriptionController.clear();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text(
           'Discussion room created'
         ),
@@ -101,33 +101,35 @@ class CreateDiscussionRoomScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextField(
+                        textCapitalization: TextCapitalization.sentences,
                         controller: titleController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Room title'
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       TextField(
+                        textCapitalization: TextCapitalization.sentences,
                         controller: descriptionController,
                         minLines: 4,
                         maxLines: 4,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Room description'
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       ValueListenableBuilder(
                         valueListenable: isLoading,
                         builder:(context, value, child) => ElevatedButton(
                           onPressed:()=> createRoom(context),
                           child: !value 
-                          ? Text(
+                          ? const Text(
                             'Create room',
                             style: TextStyle(
                               color: whiteColor,
                               fontSize: 16,
                             ),
-                          ) : SizedBox(
+                          ) : const SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(

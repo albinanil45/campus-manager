@@ -1,3 +1,4 @@
 {
-    "editor.fontFamily": "JetBrains Mono, monospace"
+    "editor.fontFamily": "JetBrains Mono, monospace",
+    "cmake.sourceDirectory": "D:/mini project/campus-manager/linux"
 }

@@ -11,7 +11,6 @@ import 'package:campus_manager/themes/colors.dart';
 import 'package:campus_manager/validators/validators.dart';
 import 'package:campus_manager/widgets/enter_otp_popup.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
 class AdminLoginScreen extends StatefulWidget {
@@ -116,8 +115,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (context) => HomeScreen(
-              announcementService: AnnouncementService(),
-              userService: UserService(),
+                  announcementService: AnnouncementService(),
+                  userService: UserService(),
                   studentCourseModel: null,
                   departmentModel: departmentModel,
                   specialRoleModel: specialRoleModel,
@@ -128,30 +127,23 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         (Route<dynamic> route) => false);
   }
 
-  Future<void> resetPassword () async {
-    if(emailController.text.trim().isEmpty){
-      showError(
-        'Please fill the email field'
-      );
+  Future<void> resetPassword() async {
+    if (emailController.text.trim().isEmpty) {
+      showError('Please fill the email field');
       return;
     }
-    if(!widget.validators.verifyEmail(emailController.text.trim())){
-      showError(
-        'Please enter a valid email'
-      );
+    if (!widget.validators.verifyEmail(emailController.text.trim())) {
+      showError('Please enter a valid email');
       return;
     }
 
-    bool isResetLinkSend = await widget.authentication.sendPasswordResetEmail(emailController.text.trim());
-    if(!isResetLinkSend){
-      showError(
-        'An error occured'
-      );
+    bool isResetLinkSend = await widget.authentication
+        .sendPasswordResetEmail(emailController.text.trim());
+    if (!isResetLinkSend) {
+      showError('An error occured');
       return;
     }
-    showError(
-      'A link to reset your password has been sent to your email'
-    );
+    showError('A link to reset your password has been sent to your email');
   }
 
   void showError(String message) {
@@ -160,161 +152,177 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     );
   }
 
- @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 20),
-                        Text(
-                          'ADMIN LOGIN',
-                          style: GoogleFonts.poppins(
-                            color: primaryColor,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 20),
-                        TextField(
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(hintText: 'Enter email'),
-                        ),
-                        const SizedBox(height: 10),
-                        ValueListenableBuilder(
-                          valueListenable: obscure,
-                          builder: (context, value, child) {
-                            return TextField(
-                              controller: passwordController,
-                              obscureText: value,
-                              decoration: InputDecoration(
-                                hintText: 'Enter password',
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    obscure.value = !obscure.value;
-                                  },
-                                  icon: Icon(
-                                    value ? Icons.visibility_off : Icons.visibility,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: institutionIdController,
-                          decoration: const InputDecoration(hintText: 'Enter institution ID'),
-                        ),
-                        const SizedBox(height: 10),
-                        ValueListenableBuilder(
-                          valueListenable: adminPasscodeObscure,
-                          builder: (context, value, child) {
-                            return TextField(
-                              controller: adminPasscodeController,
-                              obscureText: value,
-                              decoration: InputDecoration(
-                                hintText: 'Enter admin passcode',
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    adminPasscodeObscure.value = !adminPasscodeObscure.value;
-                                  },
-                                  icon: Icon(
-                                    value ? Icons.visibility_off : Icons.visibility,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        TextButton(
-                          onPressed: resetPassword,
-                          child: const Text('Forgot password?'),
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: isLoading,
-                          builder: (context, value, child) {
-                            return ElevatedButton(
-                              onPressed: value ? null : loginAdmin,
-                              child: value
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: whiteColor,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'SIGN IN',
-                                      style: TextStyle(
-                                        color: whiteColor,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Don\'t have an account?',
-                              style: TextStyle(color: blackColor),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 20),
+                          const Text(
+                            'ADMIN LOGIN',
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageTransition(
-                                    type: PageTransitionType.fade,
-                                    childCurrent: StudentOrAdminScreen(
-                                      institution: widget.institution,
-                                    ),
-                                    child: AdminSignupScreen(
-                                      adminService: AdminService(),
-                                      userService: UserService(),
-                                      authentication: Authentication(),
-                                      enterOtpPopup: EnterOtpPopup(
-                                        otpService: OtpService(),
-                                      ),
-                                      institution: widget.institution,
-                                      validators: Validators(),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          TextField(
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration:
+                                const InputDecoration(hintText: 'Enter email'),
+                          ),
+                          const SizedBox(height: 10),
+                          ValueListenableBuilder(
+                            valueListenable: obscure,
+                            builder: (context, value, child) {
+                              return TextField(
+                                controller: passwordController,
+                                obscureText: value,
+                                decoration: InputDecoration(
+                                  hintText: 'Enter password',
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      obscure.value = !obscure.value;
+                                    },
+                                    icon: Icon(
+                                      value
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                     ),
                                   ),
-                                );
-                              },
-                              child: const Text('Sign Up'),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                      ],
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: institutionIdController,
+                            decoration: const InputDecoration(
+                                hintText: 'Enter institution ID'),
+                          ),
+                          const SizedBox(height: 10),
+                          ValueListenableBuilder(
+                            valueListenable: adminPasscodeObscure,
+                            builder: (context, value, child) {
+                              return TextField(
+                                controller: adminPasscodeController,
+                                obscureText: value,
+                                decoration: InputDecoration(
+                                  hintText: 'Enter admin passcode',
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      adminPasscodeObscure.value =
+                                          !adminPasscodeObscure.value;
+                                    },
+                                    icon: Icon(
+                                      value
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          TextButton(
+                            onPressed: resetPassword,
+                            child: const Text(
+                              'Forgot password?',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          ValueListenableBuilder(
+                            valueListenable: isLoading,
+                            builder: (context, value, child) {
+                              return ElevatedButton(
+                                onPressed: value ? null : loginAdmin,
+                                child: value
+                                    ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          color: whiteColor,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'SIGN IN',
+                                        style: TextStyle(
+                                          color: whiteColor,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Don\'t have an account?',
+                                style: TextStyle(color: blackColor),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.fade,
+                                      childCurrent: StudentOrAdminScreen(
+                                        institution: widget.institution,
+                                      ),
+                                      child: AdminSignupScreen(
+                                        adminService: AdminService(),
+                                        userService: UserService(),
+                                        authentication: Authentication(),
+                                        enterOtpPopup: EnterOtpPopup(
+                                          otpService: OtpService(),
+                                        ),
+                                        institution: widget.institution,
+                                        validators: Validators(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

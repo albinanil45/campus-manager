@@ -12,7 +12,6 @@ class AdminService {
 
       return true; // Successfully saved
     } catch (e) {
-      print("Error saving admin department: $e");
       return false; // Failed to save
     }
   }
@@ -27,11 +26,9 @@ class AdminService {
       if (doc.exists) {
         return AdminDepartmentModel.fromMap(doc.data() as Map<String, dynamic>);
       } else {
-        print("Admin department not found");
         return null;
       }
     } catch (e) {
-      print("Error fetching admin department: $e");
       return null;
     }
   }

@@ -38,7 +38,7 @@ class HomeDrawer extends StatelessWidget {
                   style: TextStyle(
                     color: whiteColor,
                     fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -74,7 +74,7 @@ class HomeDrawer extends StatelessWidget {
                             style: const TextStyle(
                               color: whiteColor,
                               fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -105,6 +105,7 @@ class HomeDrawer extends StatelessWidget {
               style: TextStyle(
                 color: blackColor,
                 fontSize: 15,
+                fontWeight: FontWeight.w600,
               ),
             ),
             onTap: () {

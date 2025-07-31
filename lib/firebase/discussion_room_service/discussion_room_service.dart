@@ -11,7 +11,6 @@ class DiscussionRoomService {
       final docRef = _discussionRoomRef.doc();
       await docRef.set(room.toMap());
     } catch (e) {
-      print('Error creating discussion room: $e');
       rethrow;
     }
   }
@@ -23,7 +22,8 @@ class DiscussionRoomService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
-        return DiscussionRoomModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+        return DiscussionRoomModel.fromMap(
+            doc.data() as Map<String, dynamic>, doc.id);
       }).toList();
     });
   }
