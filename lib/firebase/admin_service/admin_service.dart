@@ -53,4 +53,13 @@ class AdminService {
       return null;
     }
   }
+
+  Stream<List<SpecialRoleModel>> streamAllSpecialRoles() {
+    return FirebaseFirestore.instance
+        .collection('special_roles')
+        .snapshots()
+        .map((querySnap) => querySnap.docs
+            .map((doc) => SpecialRoleModel.fromMap(doc.data()))
+            .toList());
+  }
 }

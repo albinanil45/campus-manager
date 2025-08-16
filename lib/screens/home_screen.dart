@@ -79,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
         institutionModel: widget.institution,
         user: widget.user,
         authentication: Authentication(),
+        specialRoleModel: widget.specialRoleModel,
       ),
       body: Stack(
         children: [

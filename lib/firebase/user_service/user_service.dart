@@ -44,4 +44,19 @@ class UserService {
       return [];
     }
   }
+
+  Future<List<UserModel>> getAllAdmins() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('userType', isEqualTo: 'admin')
+          .get();
+
+      return snapshot.docs.map((doc) {
+        return UserModel.fromMap(doc.data(), doc.id);
+      }).toList();
+    } catch (e) {
+      return [];
+    }
+  }
 }
