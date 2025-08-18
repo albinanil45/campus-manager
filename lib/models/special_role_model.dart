@@ -5,6 +5,21 @@ enum SpecialRole {
   discussionRoomManager,
 }
 
+extension SpecialRoleExtension on SpecialRole {
+  String get readable {
+    switch (this) {
+      case SpecialRole.announcementManager:
+        return "Announcement Manager";
+      case SpecialRole.superAdmin:
+        return "Super Admin";
+      case SpecialRole.suggestionManager:
+        return "Suggestion Manager";
+      case SpecialRole.discussionRoomManager:
+        return "Discussion Room Manager";
+    }
+  }
+}
+
 class SpecialRoleModel {
   final String adminId;
   final SpecialRole specialRole;

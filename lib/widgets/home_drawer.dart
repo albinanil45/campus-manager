@@ -130,7 +130,8 @@ class HomeDrawer extends StatelessWidget {
             },
           ),
           if (user.userType == UserType.admin &&
-              specialRoleModel!.specialRole == SpecialRole.superAdmin)
+              (specialRoleModel != null &&
+                  specialRoleModel!.specialRole == SpecialRole.superAdmin))
             ListTile(
               leading: const Icon(
                 Icons.report_problem_outlined,
@@ -189,7 +190,8 @@ class HomeDrawer extends StatelessWidget {
               },
             ),
           if (user.userType == UserType.admin &&
-              specialRoleModel!.specialRole == SpecialRole.superAdmin)
+              (specialRoleModel != null &&
+                  specialRoleModel!.specialRole == SpecialRole.superAdmin))
             ListTile(
               leading: const Icon(
                 Icons.supervised_user_circle_sharp,

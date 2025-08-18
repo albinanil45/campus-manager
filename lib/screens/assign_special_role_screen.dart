@@ -44,6 +44,22 @@ class _AssignSpecialRoleScreenState extends State<AssignSpecialRoleScreen> {
     });
   }
 
+  Future<void> _removeRole(String adminId) async {
+    await widget.adminService.removeSpecialRole(adminId);
+  }
+
+  Future<void> _assignRole(String adminId) async {
+    final role = await _showSelectRoleDialog(context);
+    if (role != null) {
+      final specialRoleModel = SpecialRoleModel(
+        adminId: adminId,
+        specialRole: role,
+        assignedBy: widget.userModel.id,
+      );
+      await widget.adminService.saveAdminSpecialRole(specialRoleModel);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -182,7 +198,7 @@ class _AssignSpecialRoleScreenState extends State<AssignSpecialRoleScreen> {
               ),
               child: Text(
                 specialRole != null
-                    ? specialRole.specialRole.name
+                    ? specialRole.specialRole.readable
                     : 'No roles assigned',
                 style: TextStyle(
                   color: specialRole != null ? Colors.blue : Colors.grey[700],
@@ -192,7 +208,72 @@ class _AssignSpecialRoleScreenState extends State<AssignSpecialRoleScreen> {
             ),
           ],
         ),
+        trailing: admin.id != widget.userModel.id
+            ? specialRole != null
+                ? IconButton(
+                    onPressed: () => _removeRole(specialRole!.adminId),
+                    icon: Icon(Icons.remove),
+                  )
+                : IconButton(
+                    onPressed: () => _assignRole(admin.id),
+                    icon: Icon(Icons.add),
+                  )
+            : SizedBox(),
       ),
+    );
+  }
+
+  Future<SpecialRole?> _showSelectRoleDialog(BuildContext context) async {
+    SpecialRole? selectedRole = SpecialRole.announcementManager; // default
+
+    return showDialog<SpecialRole>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text(
+                "Select Role",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: SpecialRole.values.map((role) {
+                  return RadioListTile<SpecialRole>(
+                    title: Text(role.readable),
+                    value: role,
+                    groupValue: selectedRole,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRole = value;
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, null), // cancel
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () =>
+                      Navigator.pop(context, selectedRole), // confirm
+                  child: const Text(
+                    "Confirm",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: whiteColor, minimumSize: Size(120, 40)),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

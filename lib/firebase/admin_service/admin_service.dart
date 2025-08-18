@@ -54,6 +54,18 @@ class AdminService {
     }
   }
 
+  Future<void> removeSpecialRole(String adminId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('special_roles')
+          .doc(adminId)
+          .delete();
+    } catch (e) {
+      // Optionally handle/log error
+      rethrow;
+    }
+  }
+
   Stream<List<SpecialRoleModel>> streamAllSpecialRoles() {
     return FirebaseFirestore.instance
         .collection('special_roles')
