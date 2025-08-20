@@ -2,6 +2,7 @@ import 'package:bubble/bubble.dart';
 import 'package:campus_manager/firebase/message_service/message_service.dart';
 import 'package:campus_manager/firebase/student_service/student_service.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';
+import 'package:campus_manager/models/deleted_message_model.dart';
 import 'package:campus_manager/models/discussion_room_model.dart';
 import 'package:campus_manager/models/message_model.dart';
 import 'package:campus_manager/models/student_course_model.dart';
@@ -62,6 +63,14 @@ class _DiscussionRoomChatScreenState extends State<DiscussionRoomChatScreen> {
     setState(() {
       isUsersAndCourseLoading = false;
     });
+  }
+
+  void deleteMessage(MessageModel message) async {
+    message.isDeleted = true;
+    await widget.messageService.saveMessage(
+      discussionRoomId: widget.discussionRoomModel.id,
+      message: message,
+    );
   }
 
   @override
@@ -157,17 +166,20 @@ class _DiscussionRoomChatScreenState extends State<DiscussionRoomChatScreen> {
                     isSender,
                     message,
                     () {
-                      MessageBottomSheet.show(
-                        height: 150,
-                        context: context,
-                        options: [
-                          BottomSheetOption(
-                            icon: Icons.delete_outline,
-                            label: 'Delete',
-                            onTap: () {},
-                          ),
-                        ],
-                      );
+                      if (message.senderId == widget.user.id)
+                        MessageBottomSheet.show(
+                          height: 150,
+                          context: context,
+                          options: [
+                            BottomSheetOption(
+                              icon: Icons.delete_outline,
+                              label: 'Delete',
+                              onTap: () {
+                                deleteMessage(message);
+                              },
+                            ),
+                          ],
+                        );
                     },
                   );
                 },
@@ -209,9 +221,12 @@ class _DiscussionRoomChatScreenState extends State<DiscussionRoomChatScreen> {
                     )
                   : const SizedBox(),
               Text(
-                message.content,
+                message.isDeleted
+                    ? 'This message was deleted'
+                    : message.content,
                 style: TextStyle(
                   color: isSender ? whiteColor : blackColor,
+                  fontStyle: message.isDeleted ? FontStyle.italic : null,
                 ),
               ),
             ],

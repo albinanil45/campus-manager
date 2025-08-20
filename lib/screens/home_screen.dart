@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
                       child: DiscussionRoomsListScreen(
+                        specialRoleModel: widget.specialRoleModel,
                         currentUser: widget.user,
                         discussionRoomService: DiscussionRoomService(),
                         userService: UserService(),

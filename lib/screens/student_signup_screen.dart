@@ -7,6 +7,7 @@ import 'package:campus_manager/models/student_course_model.dart';
 import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/otp_service/otp_service.dart';
 import 'package:campus_manager/screens/home_screen.dart';
+import 'package:campus_manager/screens/pending_or_removed_screen.dart';
 import 'package:campus_manager/screens/student_login_screen.dart';
 import 'package:campus_manager/screens/student_or_admin_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
@@ -157,6 +158,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       email: emailController.text.trim(),
       phone: phoneController.text.trim(),
       userType: UserType.student,
+      userStatus: UserStatus.pending,
       createdAt: Timestamp.now(),
     );
 
@@ -179,16 +181,8 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     isLoading.value = false;
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-            builder: (context) => HomeScreen(
-                  userService: UserService(),
-                  announcementService: AnnouncementService(),
-                  studentCourseModel: studentCourse,
-                  specialRoleModel: null,
-                  departmentModel: null,
-                  user: user,
-                  authentication: Authentication(),
-                  institution: widget.institution,
-                )),
+          builder: (context) => const PendingOrRemovedScreen(isPending: true),
+        ),
         (Route<dynamic> route) => false);
   }
 

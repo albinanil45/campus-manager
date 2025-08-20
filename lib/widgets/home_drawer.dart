@@ -8,8 +8,11 @@ import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/screens/assign_special_role_screen.dart';
 import 'package:campus_manager/screens/complaint_list_screen.dart';
 import 'package:campus_manager/screens/post_complaint_screen.dart';
+import 'package:campus_manager/screens/requests_list_screen.dart';
+import 'package:campus_manager/screens/student_complaints_list_screen.dart';
 import 'package:campus_manager/screens/student_or_admin_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
+import 'package:campus_manager/widgets/semester_update_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -189,6 +192,35 @@ class HomeDrawer extends StatelessWidget {
                 );
               },
             ),
+          if (user.userType == UserType.student)
+            ListTile(
+              leading: const Icon(
+                Icons.group_outlined,
+                color: primaryColor,
+              ),
+              title: const Text(
+                'My complaints',
+                style: TextStyle(
+                  color: blackColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeftJoined,
+                    childCurrent: this,
+                    child: StudentComplaintsListScreen(
+                      user: user,
+                      userService: UserService(),
+                      complaintService: ComplaintService(),
+                    ),
+                  ),
+                );
+              },
+            ),
           if (user.userType == UserType.admin &&
               (specialRoleModel != null &&
                   specialRoleModel!.specialRole == SpecialRole.superAdmin))
@@ -218,6 +250,59 @@ class HomeDrawer extends StatelessWidget {
                     ),
                   ),
                 );
+              },
+            ),
+          if (user.userType == UserType.admin &&
+              (specialRoleModel != null &&
+                  (specialRoleModel!.specialRole == SpecialRole.superAdmin ||
+                      specialRoleModel!.specialRole ==
+                          SpecialRole.userManager)))
+            ListTile(
+              leading: const Icon(
+                Icons.group_add_outlined,
+                color: primaryColor,
+              ),
+              title: const Text(
+                'View requests',
+                style: TextStyle(
+                  color: blackColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeftJoined,
+                    childCurrent: this,
+                    child: RequestsListScreen(
+                      userService: UserService(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          if (user.userType == UserType.admin &&
+              (specialRoleModel != null &&
+                  (specialRoleModel!.specialRole == SpecialRole.superAdmin ||
+                      specialRoleModel!.specialRole ==
+                          SpecialRole.userManager)))
+            ListTile(
+              leading: const Icon(
+                Icons.upload,
+                color: primaryColor,
+              ),
+              title: const Text(
+                'Update Semester',
+                style: TextStyle(
+                  color: blackColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () {
+                showSemesterUpdatePopup(context);
               },
             ),
         ],

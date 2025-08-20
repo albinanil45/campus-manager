@@ -8,7 +8,7 @@ class DiscussionRoomModel {
   final Timestamp createdAt;
   bool isClosed;
   String? outcome;
-  final String? closedBy;
+  String? closedBy;
 
   DiscussionRoomModel({
     required this.id,

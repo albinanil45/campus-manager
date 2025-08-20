@@ -8,8 +8,14 @@ class DiscussionRoomService {
   /// Add a new discussion room
   Future<void> createDiscussionRoom(DiscussionRoomModel room) async {
     try {
-      final docRef = _discussionRoomRef.doc();
-      await docRef.set(room.toMap());
+      if (room.id.isNotEmpty) {
+        // Update existing room
+        await _discussionRoomRef.doc(room.id).update(room.toMap());
+      } else {
+        // Create new room
+        final docRef = _discussionRoomRef.doc();
+        await docRef.set(room.toMap());
+      }
     } catch (e) {
       rethrow;
     }

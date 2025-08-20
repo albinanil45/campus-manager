@@ -3,6 +3,7 @@ enum SpecialRole {
   superAdmin,
   suggestionManager,
   discussionRoomManager,
+  userManager,
 }
 
 extension SpecialRoleExtension on SpecialRole {
@@ -16,6 +17,8 @@ extension SpecialRoleExtension on SpecialRole {
         return "Suggestion Manager";
       case SpecialRole.discussionRoomManager:
         return "Discussion Room Manager";
+      case SpecialRole.userManager:
+        return "User Manager";
     }
   }
 }

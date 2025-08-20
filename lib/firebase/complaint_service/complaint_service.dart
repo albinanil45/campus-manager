@@ -34,4 +34,14 @@ class ComplaintService {
     }
     return null;
   }
+
+  Stream<List<ComplaintModel>> getComplaintsByStudentStream(String studentId) {
+    return _complaintsCollection
+        .where('studentId', isEqualTo: studentId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              return ComplaintModel.fromMap(doc.data(), id: doc.id);
+            }).toList());
+  }
 }

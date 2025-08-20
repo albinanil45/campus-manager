@@ -10,21 +10,28 @@ class MessageService {
     required String discussionRoomId,
     required MessageModel message,
   }) async {
-    final docRef = _firestore
+    final messagesCollection = _firestore
         .collection('discussion_rooms')
         .doc(discussionRoomId)
-        .collection('messages')
-        .doc(); // generate random ID
+        .collection('messages');
 
-    final messageWithId = MessageModel(
-      id: docRef.id,
-      content: message.content,
-      senderId: message.senderId,
-      isDeleted: message.isDeleted,
-      createdAt: message.createdAt,
-    );
-
-    await docRef.set(messageWithId.toMap());
+    // If message.id is provided -> update
+    if (message.id.isNotEmpty) {
+      final docRef = messagesCollection.doc(message.id);
+      await docRef.set(
+          message.toMap(), SetOptions(merge: true)); // update/merge
+    } else {
+      // Else -> create new doc with random ID
+      final docRef = messagesCollection.doc();
+      final messageWithId = MessageModel(
+        id: docRef.id,
+        content: message.content,
+        senderId: message.senderId,
+        isDeleted: message.isDeleted,
+        createdAt: message.createdAt,
+      );
+      await docRef.set(messageWithId.toMap());
+    }
   }
 
   /// Get a stream of messages for a chat room

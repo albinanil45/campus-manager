@@ -3,9 +3,11 @@ import 'package:campus_manager/firebase/announcement_service/announcement_servic
 import 'package:campus_manager/firebase/authentication/authentication.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';
 import 'package:campus_manager/models/institution_model.dart';
+import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/otp_service/otp_service.dart';
 import 'package:campus_manager/screens/admin_signup_screen.dart';
 import 'package:campus_manager/screens/home_screen.dart';
+import 'package:campus_manager/screens/pending_or_removed_screen.dart';
 import 'package:campus_manager/screens/student_or_admin_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
 import 'package:campus_manager/validators/validators.dart';
@@ -112,19 +114,33 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
     isLoading.value = false;
 
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-            builder: (context) => HomeScreen(
-                  announcementService: AnnouncementService(),
-                  userService: UserService(),
-                  studentCourseModel: null,
-                  departmentModel: departmentModel,
-                  specialRoleModel: specialRoleModel,
-                  user: user!,
-                  authentication: Authentication(),
-                  institution: widget.institution,
-                )),
-        (Route<dynamic> route) => false);
+    if (user!.userStatus == UserStatus.pending) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const PendingOrRemovedScreen(isPending: true)),
+          (Route<dynamic> route) => false);
+    } else if (user.userStatus == UserStatus.removed) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const PendingOrRemovedScreen(isPending: false)),
+          (Route<dynamic> route) => false);
+    } else {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                    announcementService: AnnouncementService(),
+                    userService: UserService(),
+                    studentCourseModel: null,
+                    departmentModel: departmentModel,
+                    specialRoleModel: specialRoleModel,
+                    user: user,
+                    authentication: Authentication(),
+                    institution: widget.institution,
+                  )),
+          (Route<dynamic> route) => false);
+    }
   }
 
   Future<void> resetPassword() async {

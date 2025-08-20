@@ -45,6 +45,18 @@ class UserService {
     }
   }
 
+  Future<List<UserModel>> getPendingUsers() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('userStatus', isEqualTo: 'pending')
+        .orderBy('createdAt', descending: true)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+        .toList();
+  }
+
   Future<List<UserModel>> getAllAdmins() async {
     try {
       final snapshot = await FirebaseFirestore.instance

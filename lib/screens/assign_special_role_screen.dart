@@ -267,7 +267,9 @@ class _AssignSpecialRoleScreenState extends State<AssignSpecialRoleScreen> {
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                   style: ElevatedButton.styleFrom(
-                      foregroundColor: whiteColor, minimumSize: Size(120, 40)),
+                    foregroundColor: whiteColor,
+                    minimumSize: Size(120, 40),
+                  ),
                 ),
               ],
             );

@@ -3,6 +3,7 @@ import 'package:campus_manager/firebase/message_service/message_service.dart';
 import 'package:campus_manager/firebase/student_service/student_service.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';
 import 'package:campus_manager/models/discussion_room_model.dart';
+import 'package:campus_manager/models/special_role_model.dart';
 import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/screens/discussion_room_chat_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
@@ -15,13 +16,22 @@ class DiscussionRoomsListScreen extends StatelessWidget {
   final DiscussionRoomService discussionRoomService;
   final UserService userService;
   final UserModel currentUser;
+  final SpecialRoleModel? specialRoleModel;
 
   const DiscussionRoomsListScreen({
     super.key,
     required this.discussionRoomService,
     required this.userService,
     required this.currentUser,
+    required this.specialRoleModel,
   });
+
+  void _closeDiscussionRoom(DiscussionRoomModel room, String outcome) async {
+    room.isClosed = true;
+    room.outcome = outcome;
+    room.closedBy = currentUser.id;
+    await discussionRoomService.createDiscussionRoom(room);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +129,16 @@ class DiscussionRoomsListScreen extends StatelessWidget {
           ignoreContainers: true,
           enabled: isLoading,
           child: ListTile(
+            onLongPress: () {
+              if (!room.isClosed &&
+                  (specialRoleModel != null &&
+                      (specialRoleModel!.specialRole ==
+                              SpecialRole.discussionRoomManager ||
+                          specialRoleModel!.specialRole ==
+                              SpecialRole.superAdmin))) {
+                showCloseRoomDialog(context, room);
+              }
+            },
             onTap: () {
               if (!room.isClosed) {
                 Navigator.push(
@@ -241,6 +261,63 @@ class DiscussionRoomsListScreen extends StatelessWidget {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Future<void> showCloseRoomDialog(
+      BuildContext context, DiscussionRoomModel room) async {
+    final TextEditingController outcomeController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            "Close the Room",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: TextField(
+              controller: outcomeController,
+              maxLines: 6, // makes it a large textbox
+              decoration: InputDecoration(
+                hintText: "Write the outcome here...",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding: const EdgeInsets.all(12),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // close popup
+              },
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String outcome = outcomeController.text.trim();
+                if (outcome.isNotEmpty) {
+                  _closeDiscussionRoom(room, outcome);
+
+                  Navigator.of(context).pop(); // close popup after confirm
+                }
+              },
+              child: const Text("Confirm"),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(120, 40),
+                foregroundColor: whiteColor,
+              ),
+            ),
+          ],
         );
       },
     );

@@ -11,6 +11,7 @@ import 'package:campus_manager/models/student_course_model.dart';
 import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/screens/home_screen.dart';
 import 'package:campus_manager/screens/no_internet_screen.dart';
+import 'package:campus_manager/screens/pending_or_removed_screen.dart';
 import 'package:campus_manager/screens/student_or_admin_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -36,9 +37,17 @@ class GetInitialScreen {
         final uid = await authentication.getLoggedInUserUid();
         final user = await userService.getUser(uid!);
 
-        if(user == null){
+        if (user == null) {
           authentication.deleteCurrentUser();
           return StudentOrAdminScreen(institution: institution!);
+        }
+
+        if (user.userStatus == UserStatus.pending) {
+          return const PendingOrRemovedScreen(isPending: true);
+        }
+
+        if (user.userStatus == UserStatus.removed) {
+          return const PendingOrRemovedScreen(isPending: false);
         }
 
         AdminDepartmentModel? departmentModel;

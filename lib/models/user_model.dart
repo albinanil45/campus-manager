@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum UserType { student, admin }
 
+enum UserStatus { pending, active, removed }
+
 class UserModel {
   final String id;
   final String name;
@@ -9,6 +11,7 @@ class UserModel {
   final String phone;
   final UserType userType;
   final Timestamp createdAt;
+  UserStatus userStatus;
 
   UserModel({
     required this.id,
@@ -16,8 +19,8 @@ class UserModel {
     required this.email,
     required this.phone,
     required this.userType,
-    
     required this.createdAt,
+    required this.userStatus,
   });
 
   // Convert Firestore document to UserModel
@@ -27,8 +30,10 @@ class UserModel {
       name: map['name'] as String,
       email: map['email'] as String,
       phone: map['phone'] as String,
-      userType: UserType.values.firstWhere(
-          (e) => e.toString() == 'UserType.${map['userType']}'),
+      userType: UserType.values
+          .firstWhere((e) => e.toString() == 'UserType.${map['userType']}'),
+      userStatus: UserStatus.values
+          .firstWhere((e) => e.toString() == 'UserStatus.${map['userStatus']}'),
       createdAt: map['createdAt'] as Timestamp,
     );
   }
@@ -40,6 +45,7 @@ class UserModel {
       'email': email,
       'phone': phone,
       'userType': userType.toString().split('.').last, // Store enum as string
+      'userStatus': userStatus.toString().split('.').last,
       'createdAt': createdAt,
     };
   }
