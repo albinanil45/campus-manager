@@ -188,7 +188,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                         children: [
                           const SizedBox(height: 20),
                           const Text(
-                            'ADMIN LOGIN',
+                            'FACULTY LOGIN',
                             style: TextStyle(
                               color: primaryColor,
                               fontSize: 28,

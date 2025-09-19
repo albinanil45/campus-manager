@@ -11,6 +11,7 @@ import 'package:campus_manager/screens/post_complaint_screen.dart';
 import 'package:campus_manager/screens/requests_list_screen.dart';
 import 'package:campus_manager/screens/student_complaints_list_screen.dart';
 import 'package:campus_manager/screens/student_or_admin_screen.dart';
+import 'package:campus_manager/screens/users_list_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
 import 'package:campus_manager/widgets/semester_update_popup.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +94,7 @@ class HomeDrawer extends StatelessWidget {
                           Text(
                             user.userType == UserType.student
                                 ? 'Student'
-                                : 'Admin',
+                                : 'Faculty',
                             style: const TextStyle(
                               color: whiteColor,
                               fontSize: 13,
@@ -305,6 +306,34 @@ class HomeDrawer extends StatelessWidget {
                 showSemesterUpdatePopup(context);
               },
             ),
+          /*if (user.userType == UserType.admin &&
+              (specialRoleModel != null &&
+                  (specialRoleModel!.specialRole == SpecialRole.superAdmin ||
+                      specialRoleModel!.specialRole ==
+                          SpecialRole.userManager)))
+            ListTile(
+              leading: const Icon(
+                Icons.people,
+                color: primaryColor,
+              ),
+              title: const Text(
+                'All Users',
+                style: TextStyle(
+                  color: blackColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.rightToLeftJoined,
+                      childCurrent: this,
+                      child: UsersListScreen()),
+                );
+              },
+            ),*/
         ],
       ),
     );

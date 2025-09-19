@@ -214,7 +214,7 @@ class _AdminSignupScreenState extends State<AdminSignupScreen> {
                         children: [
                           const SizedBox(height: 20),
                           const Text(
-                            'ADMIN SIGNUP',
+                            'FACULTY SIGNUP',
                             style: TextStyle(
                               color: primaryColor,
                               fontSize: 28,

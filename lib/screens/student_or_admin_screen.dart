@@ -72,7 +72,8 @@ class StudentOrAdminScreen extends StatelessWidget {
                               type: PageTransitionType.rightToLeftJoined,
                               childCurrent: this,
                               child: StudentSignupScreen(
-                                enterOtpPopup: EnterOtpPopup(otpService: OtpService()),
+                                enterOtpPopup:
+                                    EnterOtpPopup(otpService: OtpService()),
                                 authentication: Authentication(),
                                 userService: UserService(),
                                 studentService: StudentService(),
@@ -112,7 +113,8 @@ class StudentOrAdminScreen extends StatelessWidget {
                                 adminService: AdminService(),
                                 userService: UserService(),
                                 authentication: Authentication(),
-                                enterOtpPopup: EnterOtpPopup(otpService: OtpService()),
+                                enterOtpPopup:
+                                    EnterOtpPopup(otpService: OtpService()),
                                 institution: institution,
                                 validators: Validators(),
                               ),
@@ -122,7 +124,7 @@ class StudentOrAdminScreen extends StatelessWidget {
                         child: const Padding(
                           padding: EdgeInsets.symmetric(vertical: 14),
                           child: Text(
-                            'I\'m an Admin',
+                            'I\'m a Faculty Member',
                             style: TextStyle(
                               color: whiteColor,
                               fontSize: 18,
