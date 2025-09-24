@@ -11,7 +11,6 @@ import 'package:campus_manager/screens/post_complaint_screen.dart';
 import 'package:campus_manager/screens/requests_list_screen.dart';
 import 'package:campus_manager/screens/student_complaints_list_screen.dart';
 import 'package:campus_manager/screens/student_or_admin_screen.dart';
-import 'package:campus_manager/screens/users_list_screen.dart';
 import 'package:campus_manager/themes/colors.dart';
 import 'package:campus_manager/widgets/semester_update_popup.dart';
 import 'package:flutter/material.dart';

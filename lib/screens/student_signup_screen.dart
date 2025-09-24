@@ -1,4 +1,3 @@
-import 'package:campus_manager/firebase/announcement_service/announcement_service.dart';
 import 'package:campus_manager/firebase/authentication/authentication.dart';
 import 'package:campus_manager/firebase/student_service/student_service.dart';
 import 'package:campus_manager/firebase/user_service/user_service.dart';
@@ -6,7 +5,6 @@ import 'package:campus_manager/models/institution_model.dart';
 import 'package:campus_manager/models/student_course_model.dart';
 import 'package:campus_manager/models/user_model.dart';
 import 'package:campus_manager/otp_service/otp_service.dart';
-import 'package:campus_manager/screens/home_screen.dart';
 import 'package:campus_manager/screens/pending_or_removed_screen.dart';
 import 'package:campus_manager/screens/student_login_screen.dart';
 import 'package:campus_manager/screens/student_or_admin_screen.dart';
